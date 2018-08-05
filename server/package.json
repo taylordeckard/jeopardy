@@ -1,0 +1,22 @@
+{
+  "name": "jeopardy_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "taylordeckard",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "^7.2.0",
+    "hapi": "^17.5.3",
+    "lodash": "^4.17.10",
+    "log4js": "^3.0.4",
+    "pg": "^7.4.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  }
+}

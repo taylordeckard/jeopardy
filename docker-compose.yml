@@ -11,35 +11,25 @@ services:
             - 64.102.6.247
             - 171.70.168.183
             - 173.36.131.10
-        dns_search: 
-            - cisco.com
         network_mode: "bridge"
-    # auth: 
-    #     build:
-    #         context: .
-    #         dockerfile: ./auth-proxy/Dockerfile
-    #     ports:
-    #         - "3000:3000"
-    #     volumes: 
-    #         - ./auth-proxy:/src
-    #     dns: 
-    #         - 127.0.0.1
-    #         - 64.102.6.247
-    #         - 171.70.168.183
-    #         - 173.36.131.10
-    #     dns_search: 
-    #         - cisco.com
-    #     network_mode: "bridge"
-    #     links:
-    #         - "web:foosball-v1"
-    #         - "web:foosball"
-    #         - "system:system"
-    #         - "system:system-v1"
-    #         - "redis:redis"
-    #         - "db:database"
-    #     depends_on:
-    #         - db
-    #         - redis
+    hapi: 
+        build:
+            context: .
+            dockerfile: ./server/Dockerfile
+        ports:
+            - "3000:3000"
+        volumes: 
+            - ./server:/src
+        dns: 
+            - 127.0.0.1
+            - 64.102.6.247
+            - 171.70.168.183
+            - 173.36.131.10
+        network_mode: "bridge"
+        links:
+            - "postgres:postgres"
+        depends_on:
+            - postgres
     # db:
     #     build: ./mongo
     #     ports:
