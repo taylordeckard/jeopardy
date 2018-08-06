@@ -2,8 +2,8 @@ version: '3.0'
 services:
     postgres: 
         build: 
-            context: .
-            dockerfile: ./postgres/Dockerfile
+            context: ./postgres
+            dockerfile: ./Dockerfile
         ports:
             - "5432:5432"
         dns: 
@@ -12,10 +12,10 @@ services:
             - 171.70.168.183
             - 173.36.131.10
         network_mode: "bridge"
-    hapi: 
+    server: 
         build:
-            context: .
-            dockerfile: ./server/Dockerfile
+            context: ./server
+            dockerfile: ./Dockerfile
         ports:
             - "3000:3000"
         volumes: 
@@ -30,101 +30,21 @@ services:
             - "postgres:postgres"
         depends_on:
             - postgres
-    # db:
-    #     build: ./mongo
-    #     ports:
-    #         - "27017:27017"
-    #         - "27018:27018"
-    #     volumes: 
-    #         - ./mongo/data:/data
-    #     dns: 
-    #         - 127.0.0.1
-    #         - 64.102.6.247
-    #         - 171.70.168.183
-    #         - 173.36.131.10
-    #     dns_search: 
-    #         - cisco.com
-    #     network_mode: "bridge"
-    # hub:
-    #     build:
-    #         context: .
-    #         dockerfile: ./builds/Dockerfile-hub
-    #     ports:
-    #         - "7777:8888"
-    #     volumes:
-    #         - ./HubUser/build/deploy:/src
-    #         - /src/node_modules
-    #     dns: 
-    #         - 127.0.0.1
-    #         - 64.102.6.247
-    #         - 171.70.168.183
-    #         - 173.36.131.10
-    #     dns_search: 
-    #         - cisco.com
-    #     network_mode: "bridge"
-    #     depends_on:
-    #         - db
-    #         - redis
-    #     links:
-    #         - "db:database"
-    #         - "redis:redis"
-    # redis: 
-    #     image: "redis:alpine"
-    #     ports:
-    #         - "6379:6379"
-    #     dns: 
-    #         - 127.0.0.1
-    #         - 64.102.6.247
-    #         - 171.70.168.183
-    #         - 173.36.131.10
-    #     dns_search: 
-    #         - cisco.com
-    #     network_mode: "bridge"
-    # web:
-    #     build:
-    #         context: .
-    #         dockerfile: ./builds/Dockerfile-foosball
-    #     ports:
-    #         - "8888:8888"
-    #     volumes:
-    #         - ./Foosball/build/deploy:/src
-    #         - /src/node_modules
-    #     dns: 
-    #         - 127.0.0.1
-    #         - 64.102.6.247
-    #         - 171.70.168.183
-    #         - 173.36.131.10
-    #     dns_search: 
-    #         - cisco.com
-    #     network_mode: "bridge"
-    #     depends_on:
-    #         - db
-    #         - redis
-    #         - hub
-    #     links:
-    #         - "db:database"
-    #         - "redis:redis"
-    # system:
-    #     build:
-    #         context: .
-    #         dockerfile: ./builds/Dockerfile-system
-    #     ports:
-    #         - "6666:8888"
-    #     volumes:
-    #         - ./system/build/deploy:/src
-    #         - /src/node_modules
-    #     dns: 
-    #         - 127.0.0.1
-    #         - 64.102.6.247
-    #         - 171.70.168.183
-    #         - 173.36.131.10
-    #     dns_search: 
-    #         - cisco.com
-    #     network_mode: "bridge"
-    #     depends_on:
-    #         - db
-    #     links:
-    #         - "db:database"
-    #         - "redis:redis"
-
-
+    client: 
+        build:
+            context: ./client
+            dockerfile: ./Dockerfile
+        ports:
+            - "8080:8080"
+        volumes: 
+            - ./client:/src
+        dns: 
+            - 127.0.0.1
+            - 64.102.6.247
+            - 171.70.168.183
+            - 173.36.131.10
+        network_mode: "bridge"
+        links:
+            - "server:server"
+        depends_on:
+            - server

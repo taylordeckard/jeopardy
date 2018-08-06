@@ -2,11 +2,11 @@
 FROM node:8.11.1 as ubuntu
 
 WORKDIR /src
-ADD /server/package.json /src/package.json
+ADD /package.json /src/package.json
 
 RUN npm install --only=production
 
-ADD server/. /src
+ADD . /src
 
 # Copy built service into production image
 FROM node:8.11.1-alpine as alpine
