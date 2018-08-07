@@ -1,0 +1,38 @@
+@import './variables.scss';
+@font-face {
+  font-family: 'GyparodyHv-Regular';
+  src: url('./fonts/GyparodyHv-Regular.eot?#iefix') format('embedded-opentype'),
+       url('./fonts/GyparodyHv-Regular.woff') format('woff'),
+       url('./fonts/GyparodyHv-Regular.ttf')  format('truetype'),
+       url('./fonts/GyparodyHv-Regular.svg#GyparodyHv-Regular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'KorinnaBold';
+  src: url('./fonts/KorinnaBold.eot?#iefix') format('embedded-opentype'),
+       url('./fonts/KorinnaBold.woff') format('woff'),
+       url('./fonts/KorinnaBold.ttf')  format('truetype'),
+       url('./fonts/KorinnaBold.svg#KorinnaBold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.absolute-center {
+  @include absolute-center;
+
+  &--top      { top: 30% !important; }
+  &--right    { left: 70% !important; }
+  &--bottom   { top: 70% !important; }
+  &--left     { left: 30% !important; }
+}
+.text-center {
+  text-align: center;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}      

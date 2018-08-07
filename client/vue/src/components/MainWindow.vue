@@ -1,12 +1,14 @@
 <template>
-  <div class="main"></div>
+  <Title></Title>
 </template>
 
 <script>
+import Title from './Title.vue';
+
 export default {
   name: 'MainWindow',
-  props: {
-    msg: String,
+  components: {
+    Title,
   },
 };
 </script>

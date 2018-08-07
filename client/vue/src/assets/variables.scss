@@ -1,0 +1,17 @@
+@mixin title-font {
+  font-family: 'GyparodyHv-Regular';
+}
+@mixin clue-font {
+  font-family: 'KorinnaBold';
+}
+@mixin absolute-center {
+  z-index: 10 !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%,-50%) !important;
+}
+
+$yellow: #E5C14E;
+$bg-color: #071484;
+$light-gray: #DFDFDF;
