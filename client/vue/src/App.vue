@@ -1,28 +1,27 @@
 <template>
   <div id="app">
-    <MainWindow></MainWindow>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import MainWindow from './components/MainWindow.vue';
-
 export default {
   name: 'app',
-  components: {
-    MainWindow,
-  },
 };
 </script>
 
 <style lang="scss">
-  @import './assets/variables.scss';
-  #app {
-  }
-  body {
-    @include clue-font;
-    background: $bg-color;
-    color: white;
-    text-shadow: 2px 2px 2px black;
-  }
+@import './assets/variables.scss';
+#app {
+}
+body {
+  @include clue-font;
+  background: $bg-color;
+  color: white;
+  text-shadow: 2px 2px 2px black;
+  background: #071484;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
 </style>

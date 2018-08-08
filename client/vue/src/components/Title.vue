@@ -6,7 +6,7 @@
       v-on:model-change="onNicknameChange"
       placeholder="Enter a Nickname"></TextInput>
     <transition name="fade">
-      <a v-if="showStartLink" class="link">START</a>
+      <router-link v-if="showStartLink" class="link" to="/game">START</router-link>
     </transition>
   </div>
 </template>
@@ -45,6 +45,7 @@ export default {
     font-size: 28px;
     cursor: pointer;
     transition: color .5s;
+    text-decoration: none;
     &:hover {
       color: lighten($yellow, 15%);
     }
