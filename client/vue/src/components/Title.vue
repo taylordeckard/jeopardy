@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex';
 import TextInput from './TextInput.vue';
 
 export default {
@@ -18,16 +19,20 @@ export default {
   components: {
     TextInput,
   },
-  data: () => ({
-    showStartLink: false,
-  }),
+  data() {
+    return {
+      showStartLink: false,
+    };
+  },
   methods: {
+    ...mapMutations('game', ['username']),
     onNicknameChange(nickname) {
       if (nickname) {
         this.showStartLink = true;
       } else {
         this.showStartLink = false;
       }
+      this.username(nickname);
     },
   },
 };

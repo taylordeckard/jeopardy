@@ -4,7 +4,12 @@
       <Card v-for="cat in categories" :key="cat.id"></Card>
     </div>
     <div class="grid grid--question">
-      <Card v-for="q in questions" :key="q.id"></Card>
+      <Card v-for="q in questions"
+        :key="q.id"
+        v-bind:text="q.id"
+        v-bind:clickable="true"
+        textColor="yellow">
+      </Card>
     </div>
   </div>
 </template>

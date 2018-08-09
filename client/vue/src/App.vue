@@ -12,8 +12,6 @@ export default {
 
 <style lang="scss">
 @import './assets/variables.scss';
-#app {
-}
 body {
   @include clue-font;
   background: $bg-color;
