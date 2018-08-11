@@ -16,6 +16,7 @@ services:
         build:
             context: ./server
             dockerfile: ./Dockerfile
+        command: nodemon app.js
         ports:
             - "3000:3000"
         volumes: 
