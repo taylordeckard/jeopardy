@@ -1,35 +1,37 @@
 <template>
   <div class="grid-container">
-    <div class="grid grid--category">
-      <Card v-for="cat in categories" :key="cat.id"></Card>
+    <div class="grid grid--category" v-bind:class="{
+      'grid-5-col': questions.length === 24,
+      'grid-6-col': questions.length === 30,
+    }">
+      <Card v-for="(cat, index) in categories" :key="index" :text="cat" textSmall="true"></Card>
     </div>
-    <div class="grid grid--question">
-      <Card v-for="q in questions"
-        :key="q.id"
-        v-bind:text="q.id"
+    <div class="grid grid--question" v-bind:class="{
+      'grid-5-col': questions.length === 24,
+      'grid-6-col': questions.length === 30,
+    }">
+      <Card v-for="(q, index) in questions"
+        :key="index"
+        v-bind:text="q.value"
         v-bind:clickable="true"
+        v-bind:disabled="q.disabled"
         textColor="yellow">
       </Card>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import Card from './Card.vue';
 
 export default {
   name: 'Grid',
-  data: () => ({
-    categories: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }],
-    questions: [
-      { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }, { id: 7 },
-      { id: 8 }, { id: 9 }, { id: 10 }, { id: 11 }, { id: 12 }, { id: 13 }, { id: 14 }, { id: 15 },
-      { id: 16 }, { id: 17 }, { id: 18 }, { id: 19 }, { id: 20 }, { id: 21 }, { id: 22 },
-      { id: 23 }, { id: 24 }, { id: 25 }, { id: 26 }, { id: 27 }, { id: 28 }, { id: 29 },
-      { id: 30 },
-    ],
-  }),
   components: {
     Card,
+  },
+  computed: {
+    ...mapState('game', { questions: state => state.questions }),
+    ...mapState('game', { categories: state => state.categories }),
   },
 };
 </script>
@@ -37,7 +39,12 @@ export default {
 .grid {
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: repeat(6, 1fr);
+  &.grid-5-col {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  &.grid-6-col {
+    grid-template-columns: repeat(6, 1fr);
+  }
   width: calc(100% - 20px);
   padding: 10px;
   grid-auto-flow: column;

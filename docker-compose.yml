@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3.3'
 services:
     postgres: 
         build: 
@@ -8,9 +8,6 @@ services:
             - "5432:5432"
         dns: 
             - 127.0.0.1
-            - 64.102.6.247
-            - 171.70.168.183
-            - 173.36.131.10
         network_mode: "bridge"
     server: 
         build:
@@ -23,9 +20,6 @@ services:
             - ./server:/src
         dns: 
             - 127.0.0.1
-            - 64.102.6.247
-            - 171.70.168.183
-            - 173.36.131.10
         network_mode: "bridge"
         links:
             - "postgres:postgres"
@@ -38,12 +32,8 @@ services:
         ports:
             - "8080:8080"
         volumes: 
-            - ./client:/src
-        dns: 
-            - 127.0.0.1
-            - 64.102.6.247
-            - 171.70.168.183
-            - 173.36.131.10
+            - ./client/conf.d:/etc/nginx/conf.d
+            - ./client/static:/usr/share/nginx/html
         network_mode: "bridge"
         links:
             - "server:server"

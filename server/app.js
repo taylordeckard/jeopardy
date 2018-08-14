@@ -1,12 +1,16 @@
 const logger = require('./logger');
 const { server } = require('./server');
 const Nes = require('nes');
-
+const socketOptions = require('./methods/socket');
 
 // load server routes
 const loadRoutes = async () => {
-	await server.register(Nes);
-	require('./routes/gamesRoute'); // eslint-disable-line global-require
+	await server.register({ plugin: Nes, options: socketOptions });
+	/* eslint-disable global-require */
+	require('./routes/lobbyRoute');
+	require('./routes/gamesRoute');
+	/* eslint-enable global-require */
+	return Promise.resolve();
 };
 
 const init = async () => {

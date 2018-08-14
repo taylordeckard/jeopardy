@@ -1,16 +1,17 @@
 <template>
-  <div class="card" v-bind:class="{ clickable: clickable }">
-    <div class="text absolute-center"
+  <div class="card" v-bind:class="{ clickable, disabled }">
+    <div class="text text-center absolute-center"
       v-bind:class="{
         yellow: textColor === 'yellow',
-        white: textColor === 'white'
+        white: textColor === 'white',
+        small: textSmall
       }">{{ text }}</div>
   </div>
 </template>
 <script>
 export default {
   name: 'Card',
-  props: ['clickable', 'text', 'textColor'],
+  props: ['clickable', 'disabled', 'text', 'textColor', 'textSmall'],
 };
 </script>
 <style scoped lang="scss">
@@ -27,11 +28,24 @@ export default {
     &.white {
       color: white;
     }
+    &.small {
+      font-size: 1vw;
+    }
   }
   &.clickable {
     cursor: pointer;
     &:hover {
       background: darken($bg-color, 5%);
+    }
+  }
+  &.disabled {
+    cursor: auto;
+    background: desaturate($bg-color, 75%);
+    .text {
+      color: desaturate($yellow, 75%);
+    }
+    &:hover {
+      background: desaturate($bg-color, 75%);
     }
   }
 }

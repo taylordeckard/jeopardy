@@ -1,0 +1,4 @@
+// EVENTS
+export const GAME_CREATED = 'GAME_CREATED';
+export const PLAYER_JOINED = 'PLAYER_JOINED';
+export const PLAYER_LEFT = 'PLAYER_LEFT';

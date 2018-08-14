@@ -21,13 +21,14 @@ server.route({
 		if (_.isNaN(showNumber)) {
 			return Boom.notFound('The requested page cannot be found');
 		}
-		const q = 'SELECT * FROM questions WHERE show_number=$1';
+		const q = 'SELECT * FROM questions WHERE show_number=$1 ORDER BY round DESC, category ASC';
 		try {
-			const result = await db.pool.query(q, [showNumber]);
-			return result;
+			const questions = _.get(await db.pool.query(q, [showNumber]), 'rows', []);
+			const payload = qMethods.getQuestionsPayload(questions);
+			return payload;
 		} catch (e) {
 			logger.error(e);
-			return Boom.badImplementation('This shouldn\'t happen');
+			return Boom.serverUnavailable('Error connecting to database');
 		}
 	},
 });
@@ -39,20 +40,14 @@ server.route({
 	method: 'POST',
 	path: '/games/start',
 	handler: async (req) => {
-		const showNumber = _.get(req, 'body.showNumber', _.random(1, await qMethods.getTotal()));
+		let showNumber = _.get(req, 'body.showNumber');
+		if (!showNumber) {
+			const showNumbers = await qMethods.getShowNumbers();
+			showNumber = showNumbers[_.random(0, showNumbers.length)];
+		}
 		const uuid = uuidv4();
 		logger.info(`New Game started -- Playing show ${showNumber}`);
 		activeGames.push(new Game(uuid, showNumber));
-		return uuid;
+		return { uuid, showNumber };
 	},
-});
-
-server.subscription('/game/{uuid}', {
-// 	filter: (path, msg, opts) => {
-// 		return true;
-// 	},
-// 	onSubscribe: (socket, path, params) => {
-// 	},
-// 	onUnsubscribe: (socket, path, params) => {
-// 	},
 });

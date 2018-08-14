@@ -1,13 +1,16 @@
 <template>
   <div class="text-center noselect title absolute-center">
-    <h1>jprdy!</h1>
-    <TextInput
-      class="text-center"
-      v-on:model-change="onNicknameChange"
-      placeholder="Enter a Nickname"></TextInput>
+    <div class="width-limit">
+      <h1>jprdy!</h1>
+      <TextInput
+        class="text-center"
+        v-on:model-change="onNicknameChange"
+        placeholder="Enter a Nickname"></TextInput>
+    </div>
     <transition name="fade">
-      <router-link v-if="showStartLink" class="link" to="/game">START</router-link>
+      <router-link v-if="showLink" class="link" to="/lobby">START</router-link>
     </transition>
+    <br>
   </div>
 </template>
 <script>
@@ -21,16 +24,16 @@ export default {
   },
   data() {
     return {
-      showStartLink: false,
+      showLink: false,
     };
   },
   methods: {
     ...mapMutations('game', ['username']),
     onNicknameChange(nickname) {
       if (nickname) {
-        this.showStartLink = true;
+        this.showLink = true;
       } else {
-        this.showStartLink = false;
+        this.showLink = false;
       }
       this.username(nickname);
     },
@@ -41,7 +44,11 @@ export default {
 @import '../assets/variables.scss';
 .title {
   height: 380px;
-  width: 280px;
+  width: 400px;
+  .width-limit {
+    width: 280px;
+    margin: 0px auto;
+  }
   @include title-font;
   font-size: 40px;
   .link {
@@ -63,7 +70,7 @@ export default {
   .fade-enter-active, .fade-leave-active {
     transition: opacity 1s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  .fade-enter, .fade-leave-to {
     opacity: 0;
   }
 }
