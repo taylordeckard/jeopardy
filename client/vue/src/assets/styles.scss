@@ -28,6 +28,9 @@
 .text-center {
   text-align: center;
 }
+.text-left {
+  text-align: left;
+}
 .text-large {
   font-size: 60px;
 }
@@ -46,4 +49,72 @@
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+.link {
+  @include clue-font;
+  color: $yellow;
+  font-size: 28px;
+  cursor: pointer;
+  transition: color .5s;
+  text-decoration: none;
+  &:hover {
+    color: lighten($yellow, 15%);
+  }
+  &:active {
+    position: relative;
+    top: 1px;
+    color: darken($yellow, 15%);
+  }
+}
+
+.flex {
+  @include flex;
+}
+.flex-fluid {
+  @include flex-fluid;
+}
+.flex-center-horizontal {
+  @include flex-center-horizontal;
+}
+.flex-center-vertical {
+  @include flex-center-vertical;
+}
+
+
+/**
+ * Margins
+ */ 
+$sides: ('top', 'left', 'right', 'bottom');
+.dbl-margin {
+  margin: $base-margin;
+  @each $item in $sides {
+    &-#{$item} {
+      margin-#{$item}: 2 * $base-margin;
+    }
+  }
+}
+.base-margin {
+  margin: $base-margin;
+  @each $item in $sides {
+    &-#{$item} {
+      margin-#{$item}: $base-margin;
+    }
+  }
+}
+.half-margin {
+  margin: .5 * $base-margin;
+  @each $item in $sides {
+    &-#{$item} {
+      margin-#{$item}: .5 * $base-margin;
+    }
+  }
+}
+.qtr-margin {
+  margin: .25 * $base-margin;
+  @each $item in $sides {
+    &-#{$item} {
+      margin-#{$item}: .25 * $base-margin;
+    }
+  }
 }

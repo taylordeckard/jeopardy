@@ -51,22 +51,6 @@ export default {
   }
   @include title-font;
   font-size: 40px;
-  .link {
-    @include clue-font;
-    color: $yellow;
-    font-size: 28px;
-    cursor: pointer;
-    transition: color .5s;
-    text-decoration: none;
-    &:hover {
-      color: lighten($yellow, 15%);
-    }
-    &:active {
-      position: relative;
-      top: 1px;
-      color: darken($yellow, 15%);
-    }
-  }
   .fade-enter-active, .fade-leave-active {
     transition: opacity 1s;
   }

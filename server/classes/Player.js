@@ -7,7 +7,7 @@ class Player {
 	 *	@param {any} options
 	 */
 	constructor (options) {
-		this.nickname = options.nickname;
+		this.username = options.username;
 		this.score = 0;
 	}
 }

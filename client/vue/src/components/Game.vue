@@ -16,13 +16,13 @@ export default {
     Loader,
   },
   async created() {
-    if (!this.name) {
+    if (!this.username) {
       this.$router.push('/');
     }
     this.getQuestions();
   },
   computed: {
-    ...mapState('game', { name: state => state.username }),
+    ...mapState('game', { username: state => state.username }),
     ...mapState('game', { questions: state => state.questions }),
   },
   methods: {

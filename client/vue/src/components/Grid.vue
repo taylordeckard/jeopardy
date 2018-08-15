@@ -36,6 +36,7 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+@import '../assets/variables.scss';
 .grid {
   display: grid;
   grid-gap: 10px;
@@ -60,7 +61,7 @@ export default {
     grid-template-rows: repeat(5, 1fr);
   }
   &-container {
-    box-shadow: 6px 6px 6px rgba(0,0,0,.4);
+    @include shadow;
   }
 }
 </style>

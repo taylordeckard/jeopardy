@@ -14,7 +14,8 @@ class LobbyGame {
 	constructor (options) {
 		this.id = uuidv4();
 		this.host = options.host;
-		this.players = [];
+		this.players = [this.host];
+		this.name = options.name;
 	}
 }
 
@@ -34,9 +35,9 @@ class LobbyState {
 	 * @param {string} host
 	 */
 	createNewGame (host) {
-		const game = new LobbyGame({ host });
+		const game = new LobbyGame({ host, name: `Game ${this.games.length + 1}` });
 		this.games.push(game);
-		server.publish('/lobby', { event: GAME_CREATED, game });
+		server.publish('/lobby', { event: GAME_CREATED, games: this.games });
 	}
 
 	/**
@@ -57,7 +58,7 @@ class LobbyState {
 	 */
 	removePlayer (id, player) {
 		const game = _.find(this.games, { id });
-		_.remove(game.players, { id: player.id })
+		_.remove(game.players, { id: player.id });
 		server.publish('/lobby', { event: PLAYER_LEFT, game });
 	}
 }

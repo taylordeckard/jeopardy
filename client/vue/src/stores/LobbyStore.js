@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { find, remove } from 'lodash-es';
+import api from '../api';
 import socket from '../socket';
 import {
   GAME_CREATED,
@@ -16,9 +17,6 @@ export default {
     games(state, games) {
       Vue.set(state, 'games', games);
     },
-    addGame(state, game) {
-      state.games.push(game);
-    },
     addPlayer(state, game, player) {
       const g = find(state.games, { id: game.id });
       g.players.push(player);
@@ -29,9 +27,13 @@ export default {
     },
   },
   actions: {
-    async getGames(/* context */) {
-      // const games = (await api.getGames()).body;
-      // context.commit('games', games);
+    async createGame(context, username) {
+      const games = (await api.createGame(username)).body;
+      context.commit('games', games);
+    },
+    async getGames(context) {
+      const games = (await api.getGames()).body;
+      context.commit('games', games);
     },
     async getSocket() {
       if (!socket.client.id) { // don't try to connect if already connected
@@ -40,9 +42,9 @@ export default {
     },
     async subscribe(context) {
       await socket.client.subscribe('/lobby', (msg/* , flags */) => {
-        switch (msg) {
+        switch (msg.event) {
           case GAME_CREATED:
-            context.commit('addGame', msg.game);
+            context.commit('games', msg.games);
             break;
           case PLAYER_JOINED:
             context.commit('addPlayer', msg.game, msg.player);
