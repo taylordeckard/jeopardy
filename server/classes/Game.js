@@ -1,16 +1,20 @@
 const { server } = require('../server');
+const uuidv4 = require('uuid/v4');
+
 /**
  * Manages Game state
  */
 class Game {
 	/**
-	 * Game constructor
-	 * @param {string} uuid
-	 * @param {number} showNumber
+	 * Game Constructor
+	 * @param {any} options
 	 */
-	constructor (uuid, showNumber) {
-		this.showNumber = showNumber;
-		this.uuid = uuid;
+	constructor (options) {
+		this.id = uuidv4();
+		this.host = options.host;
+		this.players = [this.host];
+		this.name = options.name;
+		this.showNumber = options.showNumber;
 	}
 
 	/**

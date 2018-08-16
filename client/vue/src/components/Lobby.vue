@@ -3,9 +3,10 @@
     <div v-if="games.length" class="absolute-center text-center">
       <div class="games-list-item text-left qtr-margin-bottom flex"
         v-for="(game, idx) in games"
-        :key="idx">
+        :key="idx"
+        v-on:click="goToGame(game.id)">
         <div class="game-title base-margin">{{ game.name }}</div>
-        <Player v-for="(p, idx) in game.players" :key="idx" v-bind:player="p"></Player>
+        <Players v-bind:players="game.players"></Players>
       </div>
       <div class="base-margin-top" v-if="!isHost">
         <a class="link" v-on:click="createGame(username)">CREATE GAME</a>
@@ -22,12 +23,12 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { find } from 'lodash-es';
-import Player from './Player.vue';
+import Players from './Players.vue';
 
 export default {
   name: 'Lobby',
   components: {
-    Player,
+    Players,
   },
   async created() {
     if (!this.username) {
@@ -54,6 +55,9 @@ export default {
     ...mapActions('lobby', ['getGames']),
     ...mapActions('lobby', ['subscribe']),
     ...mapActions('lobby', ['unsubscribe']),
+    goToGame(gameId) {
+      this.$router.push(`/game/${gameId}`);
+    },
   },
 };
 </script>
@@ -65,19 +69,19 @@ export default {
   height: 100vh;
   overflow: auto;
   .games-list-item {
+    position: relative;
     @include shadow;
     width: 80vw;
     border: 4px solid black;
     border-radius: 6px;
     cursor: pointer;
-    transition: background .5s;
+    transition: background .5s, box-shadow .2s;
     justify-content: space-between;
     &:hover {
       background: lighten($bg-color, 5%)
     }
     &:active {
       box-shadow: none;
-      position: relative;
       top: 2px;
     }
   }

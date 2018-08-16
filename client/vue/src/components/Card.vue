@@ -20,8 +20,10 @@ export default {
   position: relative;
   background: $bg-color;
   transition: background .5s;
+  user-select: none;
   .text {
     font-size: 3vw;
+    transition: font-size .2s;
     &.yellow {
       color: $yellow;
     }
@@ -34,8 +36,16 @@ export default {
   }
   &.clickable {
     cursor: pointer;
+    transition: background .5s,
+                box-shadow .2s;
     &:hover {
-      background: darken($bg-color, 5%);
+      background: lighten($bg-color, 5%);
+    }
+    &:active {
+      box-shadow: 2px 4px 8px rgba(0,0,0,.5) inset;
+      .text {
+        font-size: 2.75vw;
+      }
     }
   }
   &.disabled {

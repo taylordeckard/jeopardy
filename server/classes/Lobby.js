@@ -1,23 +1,8 @@
 const { server } = require('../server');
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
+const Game = require('./Game');
+const qMethods = require('../methods/questions');
 const { EVENTS: { GAME_CREATED, PLAYER_LEFT, PLAYER_JOINED } } = require('../constants');
-
-/**
- * LobbyGame
- */
-class LobbyGame {
-	/**
-	 * LobbyGame Constructor
-	 * @param {any} options
-	 */
-	constructor (options) {
-		this.id = uuidv4();
-		this.host = options.host;
-		this.players = [this.host];
-		this.name = options.name;
-	}
-}
 
 /**
  * Stores state of all current games
@@ -34,8 +19,12 @@ class LobbyState {
 	 * Adds a new lobby state
 	 * @param {string} host
 	 */
-	createNewGame (host) {
-		const game = new LobbyGame({ host, name: `Game ${this.games.length + 1}` });
+	async createNewGame (host) {
+		const game = new Game({
+			host,
+			name: `Game ${this.games.length + 1}`,
+			showNumber: await qMethods.getRandomShow(),
+		});
 		this.games.push(game);
 		server.publish('/lobby', { event: GAME_CREATED, games: this.games });
 	}
@@ -49,6 +38,15 @@ class LobbyState {
 		const game = _.find(this.games, { id });
 		game.players.push(player);
 		server.publish('/lobby', { event: PLAYER_JOINED, game });
+	}
+
+	/**
+	 * Gets a game by id
+	 * @param {string} id
+	 * @returns {Game}
+	 */
+	getGameById (id) {
+		return _.find(this.games, { id });
 	}
 
 	/**

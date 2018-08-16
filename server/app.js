@@ -9,6 +9,7 @@ const loadRoutes = async () => {
 	/* eslint-disable global-require */
 	require('./routes/lobbyRoute');
 	require('./routes/gamesRoute');
+	require('./routes/questionsRoute');
 	/* eslint-enable global-require */
 	return Promise.resolve();
 };

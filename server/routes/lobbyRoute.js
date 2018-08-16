@@ -27,9 +27,9 @@ server.subscription('/lobby', {
 	// 	return true;
 	// },
 	onSubscribe: (/* socket, path, params */) => {
-		logger.info('subscribed to /lobby');
+		logger.debug('subscribed to /lobby');
 	},
 	onUnsubscribe: (/* socket, path, params */) => {
-		logger.info('unsubscribed from /lobby');
+		logger.debug('unsubscribed from /lobby');
 	},
 });
