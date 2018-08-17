@@ -3,6 +3,7 @@ import { findIndex } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
+  GAME_CHANGED,
   GAME_CREATED,
   PLAYER_JOINED,
   PLAYER_LEFT,
@@ -48,6 +49,7 @@ export default {
           case GAME_CREATED:
             context.commit('games', msg.games);
             break;
+          case GAME_CHANGED:
           case PLAYER_JOINED:
           case PLAYER_LEFT:
             context.commit('updateGame', msg.game);

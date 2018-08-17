@@ -13,9 +13,10 @@ services:
         build:
             context: ./server
             dockerfile: ./Dockerfile
-        command: nodemon app.js
+        command: nodemon --inspect=0.0.0.0:9229 app.js
         ports:
             - "3000:3000"
+            - "9229:9229"
         volumes: 
             - ./server:/src
         dns: 

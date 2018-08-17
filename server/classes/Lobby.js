@@ -2,7 +2,9 @@ const { server } = require('../server');
 const _ = require('lodash');
 const Game = require('./Game');
 const qMethods = require('../methods/questions');
-const { EVENTS: { GAME_CREATED, PLAYER_LEFT, PLAYER_JOINED } } = require('../constants');
+const {
+	EVENTS: { GAME_CREATED, PLAYER_LEFT, PLAYER_JOINED },
+} = require('../constants');
 
 /**
  * Stores state of all current games
@@ -20,10 +22,14 @@ class LobbyState {
 	 * @param {string} host
 	 */
 	async createNewGame (host) {
+		const showNumber = await qMethods.getRandomShow();
+		const grid = await qMethods.getQuestionsByShow(showNumber);
+		const name = `Game ${this.games.length + 1}`;
 		const game = new Game({
+			grid,
 			host,
-			name: `Game ${this.games.length + 1}`,
-			showNumber: await qMethods.getRandomShow(),
+			name,
+			showNumber,
 		});
 		this.games.push(game);
 		server.publish('/lobby', { event: GAME_CREATED, games: this.games });
@@ -54,10 +60,15 @@ class LobbyState {
 	/**
 	 * Gets a game by id
 	 * @param {string} id
+	 * @param {any} options
 	 * @returns {Game}
 	 */
-	getGameById (id) {
-		return _.find(this.games, { id });
+	getGameById (id, options) {
+		const game = _.find(this.games, { id });
+		if (_.get(options, 'allFields')) {
+			return game;
+		}
+		return _.invoke(game, 'getGame');
 	}
 
 	/**

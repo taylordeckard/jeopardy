@@ -20,9 +20,9 @@ export default {
 @import '../assets/variables.scss';
 .player-wrapper {
   padding: 2px;
-  transition: box-shadow .2s;
+  transition: border .2s;
   &.active {
-    box-shadow: 0px 6px 50px 2px rgba(255, 255, 255, 0.6);
+    border: 2px solid $yellow;
   }
   .player {
     margin: 0px;

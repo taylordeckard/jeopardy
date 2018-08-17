@@ -1,4 +1,5 @@
 CREATE TABLE questions (
+	id          serial,
 	category    varchar(120),
 	air_date    date,
 	question    varchar(1000),

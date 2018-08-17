@@ -15,13 +15,14 @@
         v-bind:text="q.value"
         v-bind:clickable="true"
         v-bind:disabled="q.disabled"
+        v-on:click.native="onQuestionClick(q)"
         textColor="yellow">
       </Card>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import Card from './Card.vue';
 
 export default {
@@ -32,6 +33,14 @@ export default {
   computed: {
     ...mapState('game', { questions: state => state.questions }),
     ...mapState('game', { categories: state => state.categories }),
+  },
+  methods: {
+    ...mapActions('game', ['pickQuestion']),
+    async onQuestionClick(question) {
+      if (!question.disabled) {
+        await this.pickQuestion(question.id);
+      }
+    },
   },
 };
 </script>

@@ -15,12 +15,12 @@ module.exports = {
 		const showNumbers = await this.getShowNumbers();
 		return _.get(showNumbers, [_.random(0, showNumbers.length), 'show_number']);
 	},
-	async getQuestionsByShow (showNumber) {
+	async getQuestionsByShow (showNumber, options) {
 		const q = 'SELECT * FROM questions WHERE show_number=$1 ORDER BY round DESC, category ASC';
 		const questions = _.get(await db.pool.query(q, [showNumber]), 'rows', []);
-		return this.getQuestionsPayload(questions);
+		return this.getQuestionsPayload(questions, options);
 	},
-	getQuestionsPayload (rows) {
+	getQuestionsPayload (rows, options) {
 		const parsers = {
 			[JEOPARDY]: {
 				oldValues: ['$100', '$200', '$300', '$400', '$500'],
@@ -52,35 +52,54 @@ module.exports = {
 		};
 
 		const getQuestionsFn = cats => _.reduce(cats, (qs, category) => {
+			// filter on questions by a category
 			const catQs = _.filter(rows, { category });
+			// use a question value parser based on jeopardy round
 			const parser = parsers[_.get(_.head(catQs), 'round')];
 			if (parser) {
+				// get the correct value scheme (round values changed sinced the shows inception)
 				const valueScheme = findValueScheme(catQs, parser);
 				const categoryColumn = {};
 				_.each(valueScheme, (value) => {
+					// contruct a dictionary for category's questions
 					categoryColumn[value] = _.find(catQs, { value });
 					_.remove(catQs, { value });
 				});
 				_.each(valueScheme, (value) => {
+					// if a value in the scheme is not found in the dictionary,
+					// add it by using remaining category questions
 					if (!categoryColumn[value]) {
 						if (catQs.length) {
+							// this can happen if the question was a daily double
 							categoryColumn[value] = _.assign(_.head(catQs), { value });
 							catQs.shift();
 						} else {
+							// in the even there are no more category questions available,
+							// the question is not in our db.. so disable it
 							categoryColumn[value] = { disabled: true, value };
 						}
 					}
 				});
+				// sort (numerically) by value
 				const sortFn = q => _.parseInt(_.replace(q.value, '$', ''));
 				qs.push(...(_.sortBy(_.values(categoryColumn), sortFn) || []));
 			}
 			return qs;
 		}, []);
 
+		const qOmit = (question) => {
+			if (_.get(options, 'omitAnswers')) {
+				return _.omit(question, 'answer');
+			}
+			return question;
+		};
+
+		const qOmitMap = questions => _.map(questions, qOmit);
+
 		const questions = {
-			[JEOPARDY]: getQuestionsFn(categories[JEOPARDY]),
-			[DOUBLE_JEOPARDY]: getQuestionsFn(categories[DOUBLE_JEOPARDY]),
-			[FINAL_JEOPARDY]: _.find(rows, { round: FINAL_JEOPARDY }),
+			[JEOPARDY]: qOmitMap(getQuestionsFn(categories[JEOPARDY])),
+			[DOUBLE_JEOPARDY]: qOmitMap(getQuestionsFn(categories[DOUBLE_JEOPARDY])),
+			[FINAL_JEOPARDY]: qOmit(_.find(rows, { round: FINAL_JEOPARDY })),
 		};
 
 		return { categories, questions };

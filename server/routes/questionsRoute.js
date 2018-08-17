@@ -18,7 +18,7 @@ server.route({
 		}
 
 		try {
-			return qMethods.getQuestionsByShow(showNumber);
+			return qMethods.getQuestionsByShow(showNumber, { omitAnswers: true });
 		} catch (e) {
 			logger.error(e);
 			return Boom.serverUnavailable('Error connecting to database');

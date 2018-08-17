@@ -1,7 +1,10 @@
 <template>
   <div>
-    <Grid v-if="questions.length"></Grid>
-    <Loader v-if="!questions.length"></Loader>
+    <div v-if="game">
+      <Grid v-if="game.state === 'PRE_START' || game.state === 'PICK_QUESTION'"></Grid>
+      <Question v-if="game.state === 'QUESTION' || game.state === 'ANSWER'"></Question>
+    </div>
+    <Loader v-if="isLoading"></Loader>
     <div class="players-bar">
       <Players v-bind:players="game && game.players"></Players>
     </div>
@@ -13,6 +16,7 @@ import { find } from 'lodash-es';
 import Grid from './Grid.vue';
 import Loader from './Loader.vue';
 import Players from './Players.vue';
+import Question from './Question.vue';
 
 export default {
   name: 'Game',
@@ -20,6 +24,7 @@ export default {
     Grid,
     Loader,
     Players,
+    Question,
   },
   async created() {
     if (!this.username) {
@@ -41,6 +46,7 @@ export default {
     ...mapState('game', { username: state => state.username }),
     ...mapState('game', { questions: state => state.questions }),
     ...mapState('game', { game: state => state.game }),
+    ...mapState('game', { isLoading: state => state.isLoading }),
   },
   methods: {
     ...mapActions('game', ['addPlayer']),
