@@ -13,10 +13,12 @@ server.route({
 server.route({
 	method: 'POST',
 	path: '/lobby/games',
-	handler: (req) => {
-		const host = new Player({ username: _.get(req, 'payload.username') });
-		Lobby.createNewGame(host);
-		server.publish('/lobby', Lobby.games);
+	handler: async (req) => {
+		const host = new Player({
+			socketId: _.get(req, 'payload.socketId'),
+			username: _.get(req, 'payload.username'),
+		});
+		await Lobby.createNewGame(host);
 		return Lobby.games;
 	},
 });

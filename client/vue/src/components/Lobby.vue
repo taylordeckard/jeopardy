@@ -9,13 +9,13 @@
         <Players v-bind:players="game.players"></Players>
       </div>
       <div class="base-margin-top" v-if="!isHost">
-        <a class="link" v-on:click="createGame(username)">CREATE GAME</a>
+        <a class="link" v-on:click="createGameAndEnter()">CREATE GAME</a>
       </div>
     </div>
     <div v-else class="text-center absolute-center">
       <div class="text-large">NO GAMES AVAILABLE</div>
       <div class="base-margin-top" v-if="!isHost">
-        <a class="link" v-on:click="createGame(username)">CREATE GAME</a>
+        <a class="link" v-on:click="createGameAndEnter()">CREATE GAME</a>
       </div>
     </div>
   </div>
@@ -57,6 +57,11 @@ export default {
     ...mapActions('lobby', ['unsubscribe']),
     goToGame(gameId) {
       this.$router.push(`/game/${gameId}`);
+    },
+    async createGameAndEnter() {
+      await this.createGame(this.username);
+      const justCreatedGame = find(this.games, g => g.host.username === this.username);
+      this.$router.push(`/game/${justCreatedGame.id}`);
     },
   },
 };

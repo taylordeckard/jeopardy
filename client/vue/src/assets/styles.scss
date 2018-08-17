@@ -87,34 +87,34 @@
  */ 
 $sides: ('top', 'left', 'right', 'bottom');
 .dbl-margin {
-  margin: $base-margin;
+  margin: $base-spacing;
   @each $item in $sides {
     &-#{$item} {
-      margin-#{$item}: 2 * $base-margin;
+      margin-#{$item}: 2 * $base-spacing;
     }
   }
 }
 .base-margin {
-  margin: $base-margin;
+  margin: $base-spacing;
   @each $item in $sides {
     &-#{$item} {
-      margin-#{$item}: $base-margin;
+      margin-#{$item}: $base-spacing;
     }
   }
 }
 .half-margin {
-  margin: .5 * $base-margin;
+  margin: .5 * $base-spacing;
   @each $item in $sides {
     &-#{$item} {
-      margin-#{$item}: .5 * $base-margin;
+      margin-#{$item}: .5 * $base-spacing;
     }
   }
 }
 .qtr-margin {
-  margin: .25 * $base-margin;
+  margin: .25 * $base-spacing;
   @each $item in $sides {
     &-#{$item} {
-      margin-#{$item}: .25 * $base-margin;
+      margin-#{$item}: .25 * $base-spacing;
     }
   }
 }

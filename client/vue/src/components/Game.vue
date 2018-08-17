@@ -57,7 +57,7 @@ export default {
 .players-bar {
   @include flex-center-horizontal
   position: fixed;
-  bottom: 0;
+  bottom: .25 * $base-spacing;
   width: 100%;
   z-index: 1000;
   pointer-events: none;

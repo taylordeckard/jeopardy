@@ -8,6 +8,7 @@ class Player {
 	 */
 	constructor (options) {
 		this.username = options.username;
+		this.socketId = options.socketId;
 		this.score = 0;
 	}
 }

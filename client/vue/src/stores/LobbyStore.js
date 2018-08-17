@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { find, remove } from 'lodash-es';
+import { findIndex } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
@@ -12,33 +12,35 @@ export default {
   namespaced: true,
   state: {
     games: [],
+    wsClientId: '',
   },
   mutations: {
     games(state, games) {
       Vue.set(state, 'games', games);
     },
-    addPlayer(state, game, player) {
-      const g = find(state.games, { id: game.id });
-      g.players.push(player);
+    updateGame(state, game) {
+      const gameToReplaceIdx = findIndex(state.games, { id: game.id });
+      state.games.splice(gameToReplaceIdx, 1, game);
     },
-    removePlayer(state, game, player) {
-      const g = find(state.games, { id: game.id });
-      remove(g.players, { id: player.id });
+    wsClientId(state, wsClientId) {
+      Vue.set(state, 'wsClientId', wsClientId);
     },
   },
   actions: {
     async createGame(context, username) {
-      const games = (await api.createGame(username)).body;
+      const games = (await api.createGame(username, context.state.wsClientId)).body;
       context.commit('games', games);
+      return Promise.resolve();
     },
     async getGames(context) {
       const games = (await api.getGames()).body;
       context.commit('games', games);
     },
-    async getSocket() {
-      if (!socket.client.id) { // don't try to connect if already connected
+    async getSocket(context) {
+      if (!socket.client || !socket.client.id) { // don't try to connect if already connected
         await socket.client.connect();
       }
+      context.commit('wsClientId', socket.client.id);
     },
     async subscribe(context) {
       await socket.client.subscribe('/lobby', (msg/* , flags */) => {
@@ -47,10 +49,8 @@ export default {
             context.commit('games', msg.games);
             break;
           case PLAYER_JOINED:
-            context.commit('addPlayer', msg.game, msg.player);
-            break;
           case PLAYER_LEFT:
-            context.commit('removePlayer', msg.game, msg.player);
+            context.commit('updateGame', msg.game);
             break;
           default:
         }

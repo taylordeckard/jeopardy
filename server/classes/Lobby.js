@@ -16,7 +16,7 @@ class LobbyState {
 	}
 
 	/**
-	 * Adds a new lobby state
+	 * Adds a new lobby game
 	 * @param {string} host
 	 */
 	async createNewGame (host) {
@@ -30,14 +30,25 @@ class LobbyState {
 	}
 
 	/**
+	 * Removes a lobby game
+	 * @param {string} gameId
+	 */
+	async removeGame (gameId) {
+		_.remove(this.games, { id: gameId });
+	}
+
+	/**
 	 * Adds a player to a game
 	 * @param {string} id of game
 	 * @param {Player} player
+	 * @returns {Player}
 	 */
 	addPlayer (id, player) {
 		const game = _.find(this.games, { id });
 		game.players.push(player);
 		server.publish('/lobby', { event: PLAYER_JOINED, game });
+		server.publish('/game', { event: PLAYER_JOINED, game });
+		return player;
 	}
 
 	/**
@@ -50,14 +61,28 @@ class LobbyState {
 	}
 
 	/**
+	 * Removes a player from a game given a socketId reference
+	 * @param {string} socketId
+	 */
+	removePlayerBySocket (socketId) {
+		const game = _.find(this.games, g => _.find(g.players, { socketId }));
+		const player = _.find(game.players, { socketId });
+		this.removePlayer(game.id, player);
+	}
+
+	/**
 	 * Removes a player from a game
 	 * @param {string} id of game
 	 * @param {Player} player
 	 */
 	removePlayer (id, player) {
 		const game = _.find(this.games, { id });
-		_.remove(game.players, { id: player.id });
+		_.remove(game.players, { socketId: player.socketId });
+		if (!game.players.length) {
+			this.removeGame(game.id);
+		}
 		server.publish('/lobby', { event: PLAYER_LEFT, game });
+		server.publish('/game', { event: PLAYER_LEFT, game });
 	}
 }
 

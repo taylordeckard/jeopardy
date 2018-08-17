@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import api from '../api';
 import socket from '../socket';
+import { PLAYER_JOINED, PLAYER_LEFT } from '../events';
 
 export default {
   namespaced: true,
@@ -9,12 +10,10 @@ export default {
     game: null,
     questions: [],
     show: null,
+    wsClientId: null,
     username: '',
   },
   mutations: {
-    addPlayer(state, player) {
-      state.game.push(player);
-    },
     categories(state, categories) {
       Vue.set(state, 'categories', categories);
     },
@@ -27,14 +26,17 @@ export default {
     show(state, show) {
       Vue.set(state, 'show', show);
     },
+    wsClientId(state, wsClientId) {
+      Vue.set(state, 'wsClientId', wsClientId);
+    },
     username(state, username) {
       Vue.set(state, 'username', username);
     },
   },
   actions: {
     async addPlayer(context, username) {
-      const player = (await api.addPlayer(this.game.id, username)).body;
-      context.commit('addPlayer', player);
+      const socketId = context.state.wsClientId;
+      await api.addPlayer(context.state.game.id, username, socketId);
     },
     async getGame(context, gameId) {
       const game = (await api.getGame(gameId)).body;
@@ -46,15 +48,22 @@ export default {
       context.commit('categories', show.categories['Jeopardy!']);
       context.commit('show', show);
     },
-    async getSocket() {
-      if (!socket.client.id) { // don't try to connect if already connected
+    async getSocket(context) {
+      if (!socket.client || !socket.client.id) {
+        // don't try to connect if already connected
         await socket.client.connect();
       }
+      context.commit('wsClientId', socket.client.id);
     },
-    async subscribe(/* context */) {
-      await socket.client.subscribe('/game', (/* msg , flags */) => {
-        // switch (msg.event) {
-        // }
+    async subscribe(context) {
+      await socket.client.subscribe('/game', (msg/* , flags */) => {
+        switch (msg.event) {
+          case PLAYER_JOINED:
+          case PLAYER_LEFT:
+            context.commit('game', msg.game);
+            break;
+          default:
+        }
       });
     },
     async unsubscribe() {

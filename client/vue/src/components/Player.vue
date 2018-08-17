@@ -1,5 +1,5 @@
 <template>
-  <div class="player-wrapper" v-bind:class="{ active: player.active }">
+  <div class="player-wrapper" v-if="player" v-bind:class="{ active: player.active }">
     <div class="player base-margin-right">
       <div class="scoreboard">
         <div class="text-center">${{ player.score }}</div>

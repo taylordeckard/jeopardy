@@ -1,7 +1,9 @@
+const _ = require('lodash');
 const Boom = require('boom');
 const { server } = require('../server');
 const logger = require('../logger');
 const Lobby = require('../classes/Lobby');
+const Player = require('../classes/Player');
 
 server.route({
 	method: 'GET',
@@ -15,6 +17,19 @@ server.route({
 	},
 });
 
+server.route({
+	method: 'POST',
+	path: '/game/{id}/player',
+	handler: (req) => {
+		const socketId = _.get(req, 'payload.socketId');
+		const player = new Player({ username: _.get(req, 'payload.player'), socketId });
+		if (!req.params.id || !player || !socketId) {
+			return Boom.badRequest('Missing parameters');
+		}
+		return Lobby.addPlayer(req.params.id, player);
+	},
+});
+
 server.subscription('/game', {
 	// filter: (path, msg/* , opts */) => {
 	// 	logger.info(msg);
@@ -23,7 +38,8 @@ server.subscription('/game', {
 	onSubscribe: (/* socket, path, params */) => {
 		logger.debug('subscribed to /game');
 	},
-	onUnsubscribe: (/* socket, path, params */) => {
+	onUnsubscribe: (socket/* , path, params */) => {
 		logger.debug('unsubscribed from /game');
+		Lobby.removePlayerBySocket(socket.id);
 	},
 });
