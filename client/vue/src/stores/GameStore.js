@@ -1,7 +1,17 @@
 import Vue from 'vue';
+import { find } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
-import { BUZZ_IN, PICK_QUESTION, PLAYER_JOINED, PLAYER_LEFT, QUESTION_PICKED } from '../events';
+import {
+  ANSWER,
+  BUZZ_IN,
+  CORRECT_ANSWER,
+  INCORRECT_ANSWER,
+  PICK_QUESTION,
+  PLAYER_JOINED,
+  PLAYER_LEFT,
+  QUESTION_PICKED,
+} from '../events';
 
 export default {
   namespaced: true,
@@ -55,8 +65,8 @@ export default {
     async getQuestions(context, showNumber) {
       context.commit('isLoading', true);
       const show = (await api.getQuestions(showNumber)).body;
-      context.commit('questions', show.questions['Jeopardy!']);
-      context.commit('categories', show.categories['Jeopardy!']);
+      context.commit('questions', show.questions[context.state.game.round]);
+      context.commit('categories', show.categories[context.state.game.round]);
       context.commit('show', show);
       context.commit('isLoading', false);
     },
@@ -75,6 +85,14 @@ export default {
     async subscribe(context) {
       await socket.client.subscribe('/game', (msg/* , flags */) => {
         switch (msg.event) {
+          case CORRECT_ANSWER: {
+            const { id } = context.state.game.currentQuestion;
+            const question = find(context.state.show.questions[context.state.game.round], { id });
+            question.answered = true;
+            context.commit('game', msg.game);
+            break;
+          }
+          case INCORRECT_ANSWER:
           case BUZZ_IN:
           case QUESTION_PICKED:
           case PLAYER_JOINED:
@@ -87,6 +105,11 @@ export default {
     },
     async unsubscribe() {
       await socket.client.unsubscribe('/game', null);
+    },
+    async submitAnswer(context, answer) {
+      const event = ANSWER;
+      const gameId = context.state.game.id;
+      await socket.client.message({ event, gameId, answer });
     },
   },
   getters: {},

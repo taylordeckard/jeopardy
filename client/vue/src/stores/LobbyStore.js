@@ -21,7 +21,11 @@ export default {
     },
     updateGame(state, game) {
       const gameToReplaceIdx = findIndex(state.games, { id: game.id });
-      state.games.splice(gameToReplaceIdx, 1, game);
+      if (game.players.length) {
+        state.games.splice(gameToReplaceIdx, 1, game);
+      } else {
+        state.games.splice(gameToReplaceIdx, 1);
+      }
     },
     wsClientId(state, wsClientId) {
       Vue.set(state, 'wsClientId', wsClientId);

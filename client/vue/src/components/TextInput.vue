@@ -1,17 +1,30 @@
 <template>
   <input
+    ref="input"
     type="text"
     v-bind:placeholder="placeholder"
     v-model="model"
-    v-on:keyup="$emit('model-change', model)">
+    @keyup="onKeyUp">
 </template>
 <script>
 export default {
   name: 'TextInput',
   props: ['placeholder'],
+  mounted() {
+    this.$refs.input.focus();
+  },
   data: () => ({
     model: '',
   }),
+  methods: {
+    onKeyUp(event) {
+      if (event.code === 'Enter') {
+        this.$emit('enter-key', this.model);
+      } else {
+        this.$emit('model-change', this.model);
+      }
+    },
+  },
 };
 </script>
 <style scoped lang="scss">

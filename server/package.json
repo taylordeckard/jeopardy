@@ -16,6 +16,7 @@
     "log4js": "^3.0.4",
     "nes": "^9.0.1",
     "pg": "^7.4.3",
+    "string-similarity": "^1.2.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

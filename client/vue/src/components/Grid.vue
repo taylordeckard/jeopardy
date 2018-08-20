@@ -14,6 +14,7 @@
         :key="index"
         v-bind:text="q.value"
         v-bind:clickable="true"
+        v-bind:answered="q.answered"
         v-bind:disabled="q.disabled"
         v-on:click.native="onQuestionClick(q)"
         textColor="yellow">

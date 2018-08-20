@@ -1,20 +1,23 @@
 const _ = require('lodash');
 const logger = require('../logger');
-const { EVENTS: { BUZZ_IN, PICK_QUESTION } } = require('../constants');
+const { EVENTS: { ANSWER, BUZZ_IN, PICK_QUESTION } } = require('../constants');
 const Lobby = require('../classes/Lobby');
 
 module.exports = {
 	onMessage (socket, msg) {
 		logger.debug(`MESSAGE RECIEVED: ${msg.event}`);
+		const game = Lobby.getGameById(msg.gameId, { allFields: true });
 		switch (msg.event) {
-		case PICK_QUESTION: {
-			const game = Lobby.getGameById(msg.gameId, { allFields: true });
-			_.invoke(game, 'pickQuestion', msg.questionId);
+		case ANSWER: {
+			_.invoke(game, 'submitAnswer', msg.answer);
 			break;
 		}
 		case BUZZ_IN: {
-			const game = Lobby.getGameById(msg.gameId, { allFields: true });
 			_.invoke(game, 'buzzIn', msg.username);
+			break;
+		}
+		case PICK_QUESTION: {
+			_.invoke(game, 'pickQuestion', msg.questionId);
 			break;
 		}
 		default:
