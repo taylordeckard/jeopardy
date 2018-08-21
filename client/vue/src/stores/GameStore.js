@@ -3,15 +3,10 @@ import { find } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
-  ANSWER,
-  BUZZ_IN,
-  CORRECT_ANSWER,
-  INCORRECT_ANSWER,
-  PICK_QUESTION,
-  PLAYER_JOINED,
-  PLAYER_LEFT,
+  ANSWER, BUZZ_IN, CORRECT_ANSWER, INCORRECT_ANSWER, PICK_QUESTION, PLAYER_JOINED, PLAYER_LEFT,
   QUESTION_PICKED,
 } from '../events';
+import { TimeCtrl } from '../utilities';
 
 export default {
   namespaced: true,
@@ -94,13 +89,17 @@ export default {
           }
           case INCORRECT_ANSWER:
           case BUZZ_IN:
-          case QUESTION_PICKED:
+            TimeCtrl[BUZZ_IN](context, msg.game);
+            break;
+          case QUESTION_PICKED: {
+            TimeCtrl[QUESTION_PICKED](context, msg.game);
+            break;
+          }
           case PLAYER_JOINED:
           case PLAYER_LEFT:
-            context.commit('game', msg.game);
-            break;
           default:
         }
+        context.commit('game', msg.game);
       });
     },
     async unsubscribe() {

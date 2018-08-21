@@ -3,6 +3,7 @@
     <div class="text text-center absolute-center"
       v-bind:class="{
         yellow: textColor === 'yellow',
+        red: textColor === 'red',
         white: textColor === 'white',
         small: textSmall
       }">{{ text }}</div>
@@ -29,6 +30,9 @@ export default {
     }
     &.white {
       color: white;
+    }
+    &.red {
+      color: $red;
     }
     &.small {
       font-size: 1vw;

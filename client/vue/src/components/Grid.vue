@@ -17,7 +17,8 @@
         v-bind:answered="q.answered"
         v-bind:disabled="q.disabled"
         v-on:click.native="onQuestionClick(q)"
-        textColor="yellow">
+  Color="yellow/Subscription">
+      import { Subject } from 'rxjs/Subject';
       </Card>
     </div>
   </div>

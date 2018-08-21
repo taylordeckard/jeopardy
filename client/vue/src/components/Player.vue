@@ -1,7 +1,7 @@
 <template>
   <div class="player-wrapper" v-if="player" v-bind:class="{ active: player.active }">
     <div class="player base-margin-right">
-      <div class="scoreboard">
+      <div class="scoreboard" v-bind:class="{ negative }">
         <div class="text-center">${{ player.score }}</div>
       </div>
       <div class="nametag">
@@ -14,6 +14,14 @@
 export default {
   name: 'Player',
   props: ['player'],
+  computed: {
+    negative() {
+      if (this.player.score < 0) {
+        return true;
+      }
+      return false;
+    },
+  },
 };
 </script>
 <style scoped lang="scss">
@@ -30,6 +38,9 @@ export default {
     .scoreboard {
       background: #07125f;
       border: 2px solid black;
+      &.negative {
+        color: $red;
+      }
     }
     .nametag {
       background: #1d48bf;
