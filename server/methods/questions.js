@@ -88,6 +88,10 @@ module.exports = {
 		}, []);
 
 		const qOmit = (question) => {
+			// remove escape from apostrophes
+			question.answer = _.replace(question.answer, /\\'/, '\'');
+			// remove anything within parentheses in the answer
+			question.answer = _.replace(question.answer, /\(.*\)/, '');
 			if (_.get(options, 'omitAnswers')) {
 				return _.omit(question, 'answer');
 			}

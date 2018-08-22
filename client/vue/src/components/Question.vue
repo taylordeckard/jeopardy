@@ -2,25 +2,28 @@
   <div class="question">
     <div class="category">{{ game.currentQuestion.category }}</div>
     <div class="absolute-center text-center" v-html="questionText"></div>
-    <div class="answer-input flex-center-horizontal" v-if="game.state === 'ANSWER'">
+    <div class="answer-input flex-center-horizontal" v-if="game.state === 'ANSWER' && answering">
       <div class="input-container">
         <TextInput
-           v-on:enter-key="submitAnswer"
+           v-on:enter-key="ANSWER"
            placeholder="Enter Answer...">
         </TextInput>
       </div>
     </div>
     <transition name="slide-out">
-      <Timer v-if="game.timerOn" v-bind:seconds="game.timer"></Timer>
+      <Timer v-if="game.timerOn"
+        v-bind:seconds="game.timer"
+        v-bind:timer-limit="game.timerLimit"></Timer>
     </transition>
   </div>
 </template>
 
 <script>
-import { replace, toUpper } from 'lodash-es';
+import { find, get, replace, toUpper } from 'lodash-es';
 import { mapActions, mapState } from 'vuex';
 import TextInput from './TextInput.vue';
 import Timer from './Timer.vue';
+import { ANSWER, BUZZ_IN } from '../events';
 
 export default {
   name: 'Question',
@@ -36,6 +39,7 @@ export default {
   },
   computed: {
     ...mapState('game', { game: state => state.game }),
+    ...mapState('game', { username: state => state.username }),
     questionText() {
       return toUpper(replace(this.game.currentQuestion.question, /(^'|'$)/g, ''));
     },
@@ -56,13 +60,18 @@ export default {
 
       return false;
     },
+    answering() {
+      const activePlayer = find(this.game.players, { active: true });
+      return get(activePlayer, 'username') === this.username;
+    },
   },
   methods: {
-    ...mapActions('game', ['buzzIn']),
-    ...mapActions('game', ['submitAnswer']),
+    ...mapActions('game', [BUZZ_IN]),
+    ...mapActions('game', [ANSWER]),
     onKeyUp(event) {
-      if (event.code === 'Space') {
-        this.buzzIn();
+      const player = find(this.game.players, { username: this.username });
+      if (event.code === 'Space' && !player.attempted) {
+        this[BUZZ_IN]();
       }
     },
   },
@@ -83,7 +92,7 @@ export default {
 }
 .answer-input {
   position: fixed;
-  bottom: 60px;
+  bottom: 75px;
   width: 100%;
   .input-container {
     width: 40vw;

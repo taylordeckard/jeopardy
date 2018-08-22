@@ -13,18 +13,19 @@
       <Card v-for="(q, index) in questions"
         :key="index"
         v-bind:text="q.value"
-        v-bind:clickable="true"
+        v-bind:clickable="game.state === 'PRE_START' || isActive"
         v-bind:answered="q.answered"
         v-bind:disabled="q.disabled"
         v-on:click.native="onQuestionClick(q)"
-  Color="yellow/Subscription">
-      import { Subject } from 'rxjs/Subject';
+        textColor="yellow">
       </Card>
     </div>
   </div>
 </template>
 <script>
 import { mapActions, mapState } from 'vuex';
+import { get, find } from 'lodash-es';
+import { PICK_QUESTION } from '../events';
 import Card from './Card.vue';
 
 export default {
@@ -33,14 +34,20 @@ export default {
     Card,
   },
   computed: {
-    ...mapState('game', { questions: state => state.questions }),
     ...mapState('game', { categories: state => state.categories }),
+    ...mapState('game', { game: state => state.game }),
+    ...mapState('game', { questions: state => state.questions }),
+    ...mapState('game', { username: state => state.username }),
+    isActive() {
+      const player = find(this.game.players, { username: this.username });
+      return get(player, 'active');
+    },
   },
   methods: {
-    ...mapActions('game', ['pickQuestion']),
+    ...mapActions('game', [PICK_QUESTION]),
     async onQuestionClick(question) {
-      if (!question.disabled) {
-        await this.pickQuestion(question.id);
+      if (!question.disabled && (this.isActive || this.game.state === 'PRE_START')) {
+        await this[PICK_QUESTION](question.id);
       }
     },
   },

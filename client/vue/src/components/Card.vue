@@ -51,15 +51,15 @@ export default {
         font-size: 2.75vw;
       }
     }
-    &.answered  {
-      cursor: none;
-      pointer-events: none;
-      .text {
-        opacity: 0;
-      }
-      &:hover {
-        background: $bg-color;
-      }
+  }
+  &.answered  {
+    cursor: none;
+    pointer-events: none;
+    .text {
+      opacity: 0;
+    }
+    &:hover {
+      background: $bg-color;
     }
   }
   &.disabled {

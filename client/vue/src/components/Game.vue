@@ -1,8 +1,15 @@
 <template>
   <div>
     <div v-if="game">
-      <Grid v-if="game.state === 'PRE_START' || game.state === 'PICK_QUESTION'"></Grid>
-      <Question v-if="game.state === 'QUESTION' || game.state === 'ANSWER'"></Question>
+      <Answer v-if="game.showAnswer"></Answer>
+      <Grid v-if="
+        (game.state === 'PRE_START' || game.state === 'PICK_QUESTION')
+        && !game.showAnswer">
+      </Grid>
+      <Question v-if="
+        (game.state === 'QUESTION' || game.state === 'ANSWER')
+        && !game.showAnswer">
+      </Question>
     </div>
     <Loader v-if="isLoading"></Loader>
     <div class="players-bar">
@@ -13,6 +20,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { find } from 'lodash-es';
+import Answer from './Answer.vue';
 import Grid from './Grid.vue';
 import Loader from './Loader.vue';
 import Players from './Players.vue';
@@ -21,6 +29,7 @@ import Question from './Question.vue';
 export default {
   name: 'Game',
   components: {
+    Answer,
     Grid,
     Loader,
     Players,
@@ -63,7 +72,7 @@ export default {
 .players-bar {
   @include flex-center-horizontal
   position: fixed;
-  bottom: .25 * $base-spacing;
+  bottom: $base-spacing;
   width: 100%;
   z-index: 1000;
   pointer-events: none;

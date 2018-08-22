@@ -11,18 +11,19 @@
 <script>
 export default {
   name: 'Timer',
-  props: ['seconds'],
+  props: ['seconds', 'timerLimit'],
   methods: {
     isOn(index) {
-      if (this.seconds > 10) {
+      const step = this.timerLimit / 6;
+      if (this.seconds > (this.timerLimit - step)) {
         return true;
-      } else if ((index === 0 || index === 8) && this.seconds > 8) {
+      } else if ((index === 0 || index === 8) && this.seconds > (this.timerLimit - (step * 2))) {
         return true;
-      } else if ((index === 1 || index === 7) && this.seconds > 6) {
+      } else if ((index === 1 || index === 7) && this.seconds > (this.timerLimit - (step * 3))) {
         return true;
-      } else if ((index === 2 || index === 6) && this.seconds > 4) {
+      } else if ((index === 2 || index === 6) && this.seconds > (this.timerLimit - (step * 4))) {
         return true;
-      } else if ((index === 3 || index === 5) && this.seconds > 2) {
+      } else if ((index === 3 || index === 5) && this.seconds > (this.timerLimit - (step * 5))) {
         return true;
       } else if (index === 4 && this.seconds > 0) {
         return true;

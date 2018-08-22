@@ -3,8 +3,8 @@ import { find } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
-  ANSWER, BUZZ_IN, CORRECT_ANSWER, INCORRECT_ANSWER, PICK_QUESTION, PLAYER_JOINED, PLAYER_LEFT,
-  QUESTION_PICKED,
+  ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, INCORRECT_ANSWER, PICK_QUESTION, PLAYER_JOINED,
+  PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
 } from '../events';
 import { TimeCtrl } from '../utilities';
 
@@ -47,7 +47,7 @@ export default {
       const socketId = context.state.wsClientId;
       await api.addPlayer(context.state.game.id, username, socketId);
     },
-    async buzzIn(context) {
+    async [BUZZ_IN](context) {
       const event = BUZZ_IN;
       const gameId = context.state.game.id;
       const { username } = context.state;
@@ -72,7 +72,7 @@ export default {
       }
       context.commit('wsClientId', socket.client.id);
     },
-    async pickQuestion(context, questionId) {
+    async [PICK_QUESTION](context, questionId) {
       const gameId = context.state.game.id;
       const event = PICK_QUESTION;
       await socket.client.message({ event, gameId, questionId });
@@ -84,13 +84,28 @@ export default {
             const { id } = context.state.game.currentQuestion;
             const question = find(context.state.show.questions[context.state.game.round], { id });
             question.answered = true;
-            context.commit('game', msg.game);
+            TimeCtrl[CORRECT_ANSWER](context, msg.game);
             break;
           }
           case INCORRECT_ANSWER:
-          case BUZZ_IN:
+            if (msg.game.allPlayersAttempted) {
+              const { id } = context.state.game.currentQuestion;
+              const question = find(context.state.show.questions[context.state.game.round], { id });
+              question.answered = true;
+            }
+            TimeCtrl[INCORRECT_ANSWER](context, msg.game);
+            break;
+          case BUZZ_IN: {
             TimeCtrl[BUZZ_IN](context, msg.game);
             break;
+          }
+          case BUZZ_TIMEOUT: {
+            const { id } = context.state.game.currentQuestion;
+            const question = find(context.state.show.questions[context.state.game.round], { id });
+            question.answered = true;
+            TimeCtrl[BUZZ_TIMEOUT](context, msg.game);
+            break;
+          }
           case QUESTION_PICKED: {
             TimeCtrl[QUESTION_PICKED](context, msg.game);
             break;
@@ -105,10 +120,16 @@ export default {
     async unsubscribe() {
       await socket.client.unsubscribe('/game', null);
     },
-    async submitAnswer(context, answer) {
+    async [ANSWER](context, answer) {
       const event = ANSWER;
       const gameId = context.state.game.id;
       await socket.client.message({ event, gameId, answer });
+    },
+    async [QUESTION_BUZZ_TIME_OUT](context) {
+      const event = QUESTION_BUZZ_TIME_OUT;
+      const gameId = context.state.game.id;
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
     },
   },
   getters: {},
