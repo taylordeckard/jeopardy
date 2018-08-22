@@ -17,7 +17,8 @@ module.exports = {
 		QUESTION_PICKED: 'QUESTION_PICKED',
 	},
 	GAME_EXPORT_FIELDS: [
-		'currentQuestion', 'host', 'id', 'name', 'players', 'round', 'showNumber', 'state',
+		'allPlayersAttempted', 'currentQuestion', 'host', 'id', 'name', 'players', 'round',
+		'showNumber', 'started', 'state',
 	],
 	REGEX: {
 		ARTICLES: /(^a |^the | a | the)/g,

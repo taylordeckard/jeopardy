@@ -7,7 +7,7 @@ const logger = require('../logger');
 server.route({
 	method: 'GET',
 	path: '/lobby/games',
-	handler: () => Lobby.games,
+	handler: () => Lobby.getGames(),
 });
 
 server.route({
@@ -19,7 +19,7 @@ server.route({
 			username: _.get(req, 'payload.username'),
 		});
 		await Lobby.createNewGame(host);
-		return Lobby.games;
+		return Lobby.getGames();
 	},
 });
 

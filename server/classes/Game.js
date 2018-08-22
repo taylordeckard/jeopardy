@@ -54,7 +54,11 @@ class Game {
 	 * @param {string} id
 	 */
 	pickQuestion (id) {
+		if (this.state !== PRE_START && this.state !== PICK_QUESTION) {
+			return;
+		}
 		this.state = QUESTION;
+		this.started = true;
 		this.currentQuestion = _.find(this.grid.questions[this.round], { id });
 		this.setOnAllPlayers(['active'], false);
 		server.publish('/game', { event: QUESTION_PICKED, game: this.getGame() });

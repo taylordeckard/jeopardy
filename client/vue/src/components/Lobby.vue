@@ -4,6 +4,7 @@
       <div class="games-list-item text-left qtr-margin-bottom flex"
         v-for="(game, idx) in games"
         :key="idx"
+        v-bind:class="{ disabled: game.started }"
         v-on:click="goToGame(game.id)">
         <div class="game-title base-margin">{{ game.name }}</div>
         <Players v-bind:players="game.players"></Players>
@@ -89,6 +90,10 @@ export default {
       box-shadow: none;
       top: 2px;
     }
+  }
+  .disabled {
+    pointer-events: none;
+    background: desaturate($bg-color, 60%);
   }
 }
 </style>

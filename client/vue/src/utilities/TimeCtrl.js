@@ -15,9 +15,11 @@ export default {
     this.startTimer(context, game, ANSWER_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
   },
   [BUZZ_TIMEOUT](context, game) {
+    this.killTimers();
     this.showAnswer(context, game);
   },
   [QUESTION_PICKED](context, game) {
+    this.killTimers();
     this.startTimer(context, game, BUZZ_IN_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
   },
   [CORRECT_ANSWER](context, game) {

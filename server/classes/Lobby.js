@@ -72,6 +72,14 @@ class LobbyState {
 	}
 
 	/**
+	 * Gets this lobby's list of games
+	 * @returns {Game[]}
+	 */
+	getGames () {
+		return _.map(this.games, game => game.getGame());
+	}
+
+	/**
 	 * Removes a player from a game given a socketId reference
 	 * @param {string} socketId
 	 */
