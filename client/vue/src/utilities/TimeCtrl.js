@@ -8,6 +8,7 @@ const SECOND = 1000;
 const BUZZ_IN_TIME_LIMIT = 10;
 const ANSWER_TIME_LIMIT = 10;
 const SHOW_ANSWER_TIME_LIMIT = 3;
+const SHOW_ROUND_TITLE_TIME_LIMIT = 4;
 
 export default {
   [BUZZ_IN](context, game) {
@@ -48,12 +49,18 @@ export default {
     }
   },
   showAnswer(context, game) {
-    Vue.set(game, 'showAnswer', true);
+    this.startBooleanTimer(context, game, 'showAnswer', SHOW_ANSWER_TIME_LIMIT);
+  },
+  showRoundTitle(context, game) {
+    this.startBooleanTimer(context, game, 'showRoundTitle', SHOW_ROUND_TITLE_TIME_LIMIT);
+  },
+  startBooleanTimer(context, game, property, limit) {
+    Vue.set(game, property, true);
     context.commit('game', game);
     this.countdownTimer = setTimeout(() => {
-      Vue.set(game, 'showAnswer', false);
+      Vue.set(game, property, false);
       context.commit('game', game);
-    }, SECOND * SHOW_ANSWER_TIME_LIMIT);
+    }, SECOND * limit);
   },
   startTimer(context, game, limit, dispatcher) {
     Vue.set(game, 'timerOn', true);

@@ -4,6 +4,7 @@ const {
 	EVENTS: {
 		ANSWER,
 		BUZZ_IN,
+		FINAL_BID,
 		PICK_QUESTION,
 		QUESTION_BUZZ_TIME_OUT,
 	},
@@ -21,6 +22,10 @@ module.exports = {
 		}
 		case BUZZ_IN: {
 			_.invoke(game, 'buzzIn', msg.username);
+			break;
+		}
+		case FINAL_BID: {
+			_.invoke(game, 'setFinalBid', msg.username, msg.bid);
 			break;
 		}
 		case PICK_QUESTION: {

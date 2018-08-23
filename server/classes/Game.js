@@ -4,11 +4,11 @@ const Answer = require('./Answer');
 const { server } = require('../server');
 const {
 	EVENTS: {
-		ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, GAME_CHANGED, INCORRECT_ANSWER,
+		ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, GAME_CHANGED, INCORRECT_ANSWER,
 		PICK_QUESTION, PRE_START, QUESTION, QUESTION_PICKED,
 	},
 	GAME_EXPORT_FIELDS,
-	ROUNDS: { JEOPARDY },
+	ROUNDS: { DOUBLE_JEOPARDY, JEOPARDY, FINAL_JEOPARDY },
 } = require('../constants');
 const logger = require('../logger');
 
@@ -31,6 +31,32 @@ class Game {
 		this.showNumber = options.showNumber;
 		this.state = PRE_START;
 	}
+
+	/**
+	 * Advances game to the next round
+	 */
+	advanceRound () {
+		switch (this.round) {
+		case JEOPARDY:
+			this.round = DOUBLE_JEOPARDY;
+			break;
+		case DOUBLE_JEOPARDY:
+			this.state = FINAL;
+			this.round = FINAL_JEOPARDY;
+			break;
+		default:
+		}
+	}
+
+	/**
+	 * Returns whether or not all questions for this round have been answered
+	 * @returns {boolean}
+	 */
+	areAllQuestionsAnswered () {
+		const questions = this.grid.questions[this.round];
+		return _.every(questions, q => q.answered || q.disabled);
+	}
+
 
 	/**
 	 * Changes state when a user buzzes in to answer a question
@@ -91,6 +117,9 @@ class Game {
 			this.state = PICK_QUESTION;
 			this.setOnAllPlayers(['attempted'], false);
 			this.lastPicker = player;
+			if (this.areAllQuestionsAnswered()) {
+				this.advanceRound();
+			}
 			const game = this.getGame();
 			this.setAnswer(game, true, true, player.username);
 			server.publish('/game', { event: CORRECT_ANSWER, game });
@@ -112,6 +141,10 @@ class Game {
 			let game;
 			_.set(this, 'allPlayersAttempted', _.every(this.players, 'attempted'));
 			if (this.allPlayersAttempted) {
+				this.currentQuestion.answered = true;
+				if (this.areAllQuestionsAnswered()) {
+					this.advanceRound();
+				}
 				_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
 				if (this.lastPicker) {
 					this.lastPicker.active = true;
@@ -148,6 +181,10 @@ class Game {
 			this.setOnAllPlayers(['active', 'attempted'], false);
 			if (this.lastPicker) {
 				this.lastPicker.active = true;
+			}
+			this.currentQuestion.answered = true;
+			if (this.areAllQuestionsAnswered()) {
+				this.advanceRound();
 			}
 			const game = this.getGame();
 			this.setAnswer(game, true, false);
@@ -188,6 +225,16 @@ class Game {
 				player[field] = value;
 			});
 		});
+	}
+
+	/**
+	 * Sets the final bids
+	 * @param {string} username
+	 * @param {number} bid
+	 */
+	setFinalBid (username, bid) {
+		const player = _.find(this.players, { username });
+		_.set(player, 'finalBid', bid);
 	}
 }
 

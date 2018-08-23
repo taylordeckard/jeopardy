@@ -1,5 +1,6 @@
 // EVENTS
 export const ANSWER = 'ANSWER';
+export const FINAL_BID = 'FINAL_BID';
 export const BUZZ_IN = 'BUZZ_IN';
 export const BUZZ_TIMEOUT = 'BUZZ_TIMEOUT';
 export const CORRECT_ANSWER = 'CORRECT_ANSWER';

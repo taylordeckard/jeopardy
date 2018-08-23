@@ -25,11 +25,20 @@
   &--bottom   { top: 70% !important; }
   &--left     { left: 30% !important; }
 }
+.title-font {
+  @include title-font;
+}
+.text-yellow {
+  color: $yellow;
+}
 .text-center {
   text-align: center;
 }
 .text-left {
   text-align: left;
+}
+.text-xlarge {
+  font-size: 120px;
 }
 .text-large {
   font-size: 60px;
