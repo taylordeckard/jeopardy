@@ -4,7 +4,8 @@ const Answer = require('./Answer');
 const { server } = require('../server');
 const {
 	EVENTS: {
-		ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, GAME_CHANGED, INCORRECT_ANSWER,
+		ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, FINAL_ANSWER_TIME_OUT,
+		FINAL_BID_TIME_OUT, FINAL_QUESTION, GAME_CHANGED, GAME_RESULTS, INCORRECT_ANSWER,
 		PICK_QUESTION, PRE_START, QUESTION, QUESTION_PICKED,
 	},
 	GAME_EXPORT_FIELDS,
@@ -73,6 +74,25 @@ class Game {
 		} else if (!_.includes(this.buzzQueue, username)) {
 			this.buzzQueue.push(username);
 		}
+	}
+
+	/**
+	 * Calculates the final score
+	 */
+	calculateFinalScore () {
+		_.each(this.players, (player) => {
+			player.isCorrect = Answer.check(
+				this.grid.questions[FINAL_JEOPARDY].answer,
+				player.finalAnswer,
+			);
+			if (player.isCorrect) {
+				player.score += _.parseInt(player.finalBid || 0);
+			} else {
+				player.score -= _.parseInt(player.finalBid);
+			}
+		});
+		const winner = _.maxBy(this.players, 'score');
+		winner.isWinner = true;
 	}
 
 	/**
@@ -225,6 +245,54 @@ class Game {
 				player[field] = value;
 			});
 		});
+	}
+
+	/**
+	 * Handles final jeopardy answer timeout event
+	 * @param {string} username
+	 */
+	onFinalAnswerTimeout (username) {
+		this.timedOutPlayers = _.uniqBy([
+			...(this.timedOutPlayers || []),
+			_.find(this.players, { username }),
+		], 'username');
+		// when all player's answers timout comes in, advance the state
+		if (this.timedOutPlayers.length === this.players.length) {
+			_.set(this, 'state', GAME_RESULTS);
+			this.calculateFinalScore();
+			const game = this.getGame();
+			game.currentQuestion = this.grid.questions[FINAL_JEOPARDY];
+			server.publish('/game', { event: FINAL_ANSWER_TIME_OUT, game });
+			this.timedOutPlayers = [];
+		}
+	}
+
+	/**
+	 * Sets the final jeopardy  anwer
+	 * @param {string} username
+	 * @param {string} answer
+	 */
+	setFinalAnswer (username, answer) {
+		const player = _.find(this.players, { username });
+		_.set(player, 'finalAnswer', answer);
+	}
+
+	/**
+	 * Handles bid timeout event
+	 * @param {string} username
+	 */
+	onFinalBidTimeout (username) {
+		this.timedOutPlayers = _.uniqBy([
+			...(this.timedOutPlayers || []),
+			_.find(this.players, { username }),
+		], 'username');
+		// when all player's bid timout comes in, advance the state
+		if (this.timedOutPlayers.length === this.players.length) {
+			_.set(this, 'state', FINAL_QUESTION);
+			const game = this.getGame();
+			server.publish('/game', { event: FINAL_BID_TIME_OUT, game });
+			this.timedOutPlayers = [];
+		}
 	}
 
 	/**

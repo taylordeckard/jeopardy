@@ -31,6 +31,9 @@
 .text-yellow {
   color: $yellow;
 }
+.text-red {
+  color: $red;
+}
 .text-center {
   text-align: center;
 }
@@ -45,6 +48,9 @@
 }
 .text-medium {
   font-size: 40px;
+}
+.text-small {
+  font-size: 20px;
 }
 
 .noselect {
@@ -61,6 +67,12 @@
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+.slide-out-enter-active, .slide-out-leave-active {
+  transition: bottom 1s;
+}
+.slide-out-enter, .slide-out-leave-to {
+  bottom: -12px;
 }
 
 .link {

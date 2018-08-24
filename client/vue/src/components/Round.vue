@@ -2,10 +2,14 @@
   <div class="round-title">
     <div class="absolute-center text-xlarge title-font">
       <transition name="slidefade">
-      <div v-if="game.round === 'Jeopardy!' && show">JPRDY!</div>
+        <div v-if="game.round === 'Jeopardy!' && show">JPRDY!</div>
       </transition>
-      <div v-if="game.round === 'Double Jeopardy!'">DBL JPRDY!</div>
-      <div v-if="game.round === 'Final Jeopardy!'">FNL JPRDY!</div>
+      <transition name="slidefade">
+        <div v-if="game.round === 'Double Jeopardy!' && show">DBL JPRDY!</div>
+      </transition>
+      <transition name="slidefade">
+        <div v-if="game.round === 'Final Jeopardy!' && show">FNL JPRDY!</div>
+      </transition>
     </div>
   </div>
 </template>

@@ -11,7 +11,14 @@
         && !game.showAnswer && !game.showRoundTitle">
       </Question>
       <Round v-if="game.showRoundTitle"></Round>
-      <Final v-if="game.state === 'FINAL' && !game.showAnswer && !game.showRoundTitle"></Final>
+      <FinalBid v-if="game.state === 'FINAL' && !game.showAnswer && !game.showRoundTitle">
+      </FinalBid>
+      <FinalQuestion v-if="
+        game.state === 'FINAL_QUESTION'
+        && !game.showAnswer && !game.showRoundTitle"></FinalQuestion>
+      <GameResults v-if="
+        game.state === 'GAME_RESULTS'
+        && !game.showAnswer && !game.showRoundTitle"></GameResults>
     </div>
     <Loader v-if="isLoading"></Loader>
     <div class="players-bar">
@@ -23,7 +30,9 @@
 import { mapActions, mapState } from 'vuex';
 import { find } from 'lodash-es';
 import Answer from './Answer.vue';
-import Final from './Final.vue';
+import FinalBid from './FinalBid.vue';
+import FinalQuestion from './FinalQuestion.vue';
+import GameResults from './GameResults.vue';
 import Grid from './Grid.vue';
 import Loader from './Loader.vue';
 import Players from './Players.vue';
@@ -34,7 +43,9 @@ export default {
   name: 'Game',
   components: {
     Answer,
-    Final,
+    FinalBid,
+    FinalQuestion,
+    GameResults,
     Grid,
     Loader,
     Players,

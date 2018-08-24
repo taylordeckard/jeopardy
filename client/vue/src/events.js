@@ -1,6 +1,11 @@
 // EVENTS
 export const ANSWER = 'ANSWER';
+export const FINAL = 'FINAL';
+export const FINAL_ANSWER = 'FINAL_ANSWER';
+export const FINAL_ANSWER_TIME_OUT = 'FINAL_ANSWER_TIME_OUT';
 export const FINAL_BID = 'FINAL_BID';
+export const FINAL_BID_TIME_OUT = 'FINAL_BID_TIME_OUT';
+export const FINAL_QUESTION = 'FINAL_QUESTION';
 export const BUZZ_IN = 'BUZZ_IN';
 export const BUZZ_TIMEOUT = 'BUZZ_TIMEOUT';
 export const CORRECT_ANSWER = 'CORRECT_ANSWER';

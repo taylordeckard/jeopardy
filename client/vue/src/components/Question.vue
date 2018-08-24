@@ -43,23 +43,6 @@ export default {
     questionText() {
       return toUpper(replace(this.game.currentQuestion.question, /(^'|'$)/g, ''));
     },
-    isOn(index) {
-      if (this.game.timer > 10) {
-        return true;
-      } else if ((index === 0 || index === 8) && this.game.timer > 8) {
-        return true;
-      } else if ((index === 1 || index === 7) && this.game.timer > 6) {
-        return true;
-      } else if ((index === 2 || index === 6) && this.game.timer > 4) {
-        return true;
-      } else if ((index === 3 || index === 5) && this.game.timer > 2) {
-        return true;
-      } else if (index === 4 && this.game.timer > 0) {
-        return true;
-      }
-
-      return false;
-    },
     answering() {
       const activePlayer = find(this.game.players, { active: true });
       return get(activePlayer, 'username') === this.username;
@@ -97,11 +80,5 @@ export default {
   .input-container {
     width: 40vw;
   }
-}
-.slide-out-enter-active, .slide-out-leave-active {
-  transition: bottom 1s;
-}
-.slide-out-enter, .slide-out-leave-to {
-  bottom: -12px;
 }
 </style>

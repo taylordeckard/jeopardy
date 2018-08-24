@@ -3,7 +3,8 @@ import { find } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
-  ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL_BID, INCORRECT_ANSWER, PICK_QUESTION,
+  ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, FINAL_ANSWER, FINAL_ANSWER_TIME_OUT,
+  FINAL_BID, FINAL_BID_TIME_OUT, FINAL_QUESTION, INCORRECT_ANSWER, PICK_QUESTION,
   PLAYER_JOINED, PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
 } from '../events';
 import { TimeCtrl } from '../utilities';
@@ -51,7 +52,6 @@ export default {
     },
     async getGame(context, gameId) {
       const game = (await api.getGame(gameId)).body;
-      game.state = 'FINAL'; // eslint-disable-line
       context.commit('game', game);
       TimeCtrl.showRoundTitle(context, game);
     },
@@ -68,59 +68,76 @@ export default {
       }
       context.commit('wsClientId', socket.client.id);
     },
-    async [PICK_QUESTION](context, questionId) {
-      const gameId = context.state.game.id;
-      const event = PICK_QUESTION;
-      await socket.client.message({ event, gameId, questionId });
-    },
     async subscribe(context) {
       await socket.client.subscribe('/game', (msg/* , flags */) => {
         switch (msg.event) {
           case CORRECT_ANSWER: {
+            let startNextRound = false;
             if (context.state.game.round !== msg.game.round) {
               context.commit('questions', context.state.show.questions[msg.game.round]);
               context.commit('categories', context.state.show.categories[msg.game.round]);
-              TimeCtrl.showRoundTitle(context, msg.game);
+              startNextRound = true;
             }
             const { id } = context.state.game.currentQuestion;
             const question = find(context.state.show.questions[context.state.game.round], { id });
             question.answered = true;
-            TimeCtrl[CORRECT_ANSWER](context, msg.game);
+            TimeCtrl[CORRECT_ANSWER](context, msg.game, () => {
+              if (startNextRound) {
+                TimeCtrl.showRoundTitle(context, msg.game);
+              }
+            });
             break;
           }
-          case INCORRECT_ANSWER:
+          case INCORRECT_ANSWER: {
+            let startNextRound = false;
             if (context.state.game.round !== msg.game.round) {
               context.commit('questions', context.state.show.questions[msg.game.round]);
               context.commit('categories', context.state.show.categories[msg.game.round]);
-              TimeCtrl.showRoundTitle(context, msg.game);
+              startNextRound = true;
             }
             if (msg.game.allPlayersAttempted) {
               const { id } = context.state.game.currentQuestion;
               const question = find(context.state.show.questions[context.state.game.round], { id });
               question.answered = true;
             }
-            TimeCtrl[INCORRECT_ANSWER](context, msg.game);
+            TimeCtrl[INCORRECT_ANSWER](context, msg.game, () => {
+              if (startNextRound) {
+                TimeCtrl.showRoundTitle(context, msg.game);
+              }
+            });
             break;
+          }
           case BUZZ_IN: {
             TimeCtrl[BUZZ_IN](context, msg.game);
             break;
           }
           case BUZZ_TIMEOUT: {
+            let startNextRound = false;
             if (context.state.game.round !== msg.game.round) {
               context.commit('questions', context.state.show.questions[msg.game.round]);
               context.commit('categories', context.state.show.categories[msg.game.round]);
-              TimeCtrl.showRoundTitle(context, msg.game);
+              startNextRound = true;
             }
             const { id } = context.state.game.currentQuestion;
             const question = find(context.state.show.questions[context.state.game.round], { id });
             question.answered = true;
-            TimeCtrl[BUZZ_TIMEOUT](context, msg.game);
+            TimeCtrl[BUZZ_TIMEOUT](context, msg.game, () => {
+              if (startNextRound) {
+                TimeCtrl.showRoundTitle(context, msg.game);
+              }
+            });
             break;
           }
           case QUESTION_PICKED: {
             TimeCtrl[QUESTION_PICKED](context, msg.game);
             break;
           }
+          case FINAL_BID_TIME_OUT: {
+            TimeCtrl[FINAL_ANSWER](context, msg.game);
+            break;
+          }
+          case FINAL_QUESTION:
+            break;
           case PLAYER_JOINED:
           case PLAYER_LEFT:
           default:
@@ -136,6 +153,23 @@ export default {
       const gameId = context.state.game.id;
       await socket.client.message({ event, gameId, answer });
     },
+    async [FINAL](context) {
+      TimeCtrl[FINAL](context, context.state.game);
+    },
+    async [FINAL_ANSWER](context, answer) {
+      const event = FINAL_ANSWER;
+      const gameId = context.state.game.id;
+      const { username } = context.state;
+      await socket.client.message({
+        event, gameId, username, answer,
+      });
+    },
+    async [FINAL_ANSWER_TIME_OUT](context) {
+      const event = FINAL_ANSWER_TIME_OUT;
+      const gameId = context.state.game.id;
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
+    },
     async [FINAL_BID](context, bid) {
       const event = FINAL_BID;
       const gameId = context.state.game.id;
@@ -143,6 +177,17 @@ export default {
       await socket.client.message({
         event, gameId, username, bid,
       });
+    },
+    async [FINAL_BID_TIME_OUT](context) {
+      const event = FINAL_BID_TIME_OUT;
+      const gameId = context.state.game.id;
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
+    },
+    async [PICK_QUESTION](context, questionId) {
+      const gameId = context.state.game.id;
+      const event = PICK_QUESTION;
+      await socket.client.message({ event, gameId, questionId });
     },
     async [QUESTION_BUZZ_TIME_OUT](context) {
       const event = QUESTION_BUZZ_TIME_OUT;
