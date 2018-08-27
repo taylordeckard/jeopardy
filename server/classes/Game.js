@@ -88,7 +88,7 @@ class Game {
 			if (player.isCorrect) {
 				player.score += _.parseInt(player.finalBid || 0);
 			} else {
-				player.score -= _.parseInt(player.finalBid);
+				player.score -= _.parseInt(player.finalBid || 0);
 			}
 		});
 		const winner = _.maxBy(this.players, 'score');
@@ -162,10 +162,10 @@ class Game {
 			_.set(this, 'allPlayersAttempted', _.every(this.players, 'attempted'));
 			if (this.allPlayersAttempted) {
 				this.currentQuestion.answered = true;
+				_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
 				if (this.areAllQuestionsAnswered()) {
 					this.advanceRound();
 				}
-				_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
 				if (this.lastPicker) {
 					this.lastPicker.active = true;
 				}

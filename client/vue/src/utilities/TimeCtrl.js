@@ -66,8 +66,9 @@ export default {
     Vue.set(game, property, true);
     context.commit('game', game);
     this.countdownTimer = setTimeout(() => {
-      Vue.set(game, property, false);
-      context.commit('game', game);
+      const currentGame = context.state.game;
+      Vue.set(currentGame, property, false);
+      context.commit('game', currentGame);
       if (callback) {
         callback();
       }
@@ -79,12 +80,14 @@ export default {
     Vue.set(game, 'timerLimit', limit);
     context.commit('game', game);
     this.countdownInterval = setInterval(() => {
-      Vue.set(game, 'timer', game.timer - 0.1);
-      context.commit('game', game);
+      const currentGame = context.state.game;
+      Vue.set(currentGame, 'timer', game.timer - 0.1);
+      context.commit('game', currentGame);
     }, SECOND / 10);
     this.countdownTimer = setTimeout(() => {
-      Vue.set(game, 'timerOn', false);
-      context.commit('game', game);
+      const currentGame = context.state.game;
+      Vue.set(currentGame, 'timerOn', false);
+      context.commit('game', currentGame);
       clearInterval(this.countdownInterval); // cancel countdown
       context.dispatch(dispatcher);
       if (callback) {
