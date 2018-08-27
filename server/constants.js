@@ -36,5 +36,5 @@ module.exports = {
 		DOUBLE_JEOPARDY: 'Double Jeopardy!',
 		FINAL_JEOPARDY: 'Final Jeopardy!',
 	},
-	SIMILARITY_THRESHOLD: 0.85,
+	SIMILARITY_THRESHOLD: 0.75,
 };
