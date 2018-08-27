@@ -2,14 +2,18 @@
   <div>
     <div v-if="game && !isLoading">
       <Answer v-if="game.showAnswer"></Answer>
-      <Grid v-if="
-        (game.state === 'PRE_START' || game.state === 'PICK_QUESTION')
-        && !game.showAnswer && !game.showRoundTitle">
-      </Grid>
-      <Question v-if="
-        (game.state === 'QUESTION' || game.state === 'ANSWER')
-        && !game.showAnswer && !game.showRoundTitle">
-      </Question>
+      <transition name="fade-in">
+        <Grid v-if="
+          (game.state === 'PRE_START' || game.state === 'PICK_QUESTION')
+          && !game.showAnswer && !game.showRoundTitle">
+        </Grid>
+      </transition>
+      <transition name="fade-in">
+        <Question v-if="
+          (game.state === 'QUESTION' || game.state === 'ANSWER')
+          && !game.showAnswer && !game.showRoundTitle">
+        </Question>
+      </transition>
       <Round v-if="game.showRoundTitle"></Round>
       <FinalBid v-if="game.state === 'FINAL' && !game.showAnswer && !game.showRoundTitle">
       </FinalBid>
