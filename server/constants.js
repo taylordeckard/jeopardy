@@ -28,7 +28,7 @@ module.exports = {
 		'showNumber', 'started', 'state',
 	],
 	REGEX: {
-		ARTICLES: /(^a |^the | a | the)/g,
+		ARTICLES: /(^a |^the |^of | a | the | of |[/-])/g,
 		BAD_CHARS: /["'.]/g,
 	},
 	ROUNDS: {
@@ -36,5 +36,5 @@ module.exports = {
 		DOUBLE_JEOPARDY: 'Double Jeopardy!',
 		FINAL_JEOPARDY: 'Final Jeopardy!',
 	},
-	SIMILARITY_THRESHOLD: 0.75,
+	SIMILARITY_THRESHOLD: 0.85,
 };

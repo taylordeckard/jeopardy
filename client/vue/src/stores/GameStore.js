@@ -146,6 +146,7 @@ export default {
       });
     },
     async unsubscribe() {
+      TimeCtrl.killTimers();
       await socket.client.unsubscribe('/game', null);
     },
     async [ANSWER](context, answer) {
