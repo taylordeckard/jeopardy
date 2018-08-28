@@ -41,7 +41,17 @@ export default {
     ...mapState('game', { game: state => state.game }),
     ...mapState('game', { username: state => state.username }),
     questionText() {
-      return toUpper(replace(this.game.currentQuestion.question, /(^'|'$)/g, ''));
+      let link;
+      let questionText = this.game.currentQuestion.question;
+      if (/<a href/.test(questionText)) {
+        [link] = questionText.match(/<a href.*<\/a>/);
+        link = replace(link, /a href/, 'a target="_blank" href');
+      }
+      questionText = toUpper(questionText);
+      if (link) {
+        questionText = replace(questionText, /<A HREF.*<\/A>/, link);
+      }
+      return replace(questionText, /(^'|'$)/g, '');
     },
     answering() {
       const activePlayer = find(this.game.players, { active: true });
