@@ -16,7 +16,6 @@ module.exports = {
 		return _.get(showNumbers, [_.random(0, showNumbers.length), 'show_number']);
 	},
 	async getQuestionsByShow (showNumber, options) {
-		console.log(showNumber);
 		const q = 'SELECT * FROM questions WHERE show_number=$1 ORDER BY round DESC, category ASC';
 		const questions = _.get(await db.pool.query(q, [showNumber]), 'rows', []);
 		return this.getQuestionsPayload(questions, options);
@@ -93,7 +92,19 @@ module.exports = {
 			question.answer = _.replace(question.answer, /\\'/, '\'');
 			// remove anything within parentheses in the answer
 			question.answer = _.replace(question.answer, /\(.*\)/, '');
-			question.answer = _.replace(question.answer, /href=""(.*)""/, 'href="$1"');
+			// capitalize the question
+			let link;
+			let questionText = question.question;
+			if (/<a href/.test(questionText)) {
+				[link] = questionText.match(/<a href.*<\/a>/);
+				link = _.replace(link, /a href/, 'a target="_blank" href');
+			}
+			questionText = _.toUpper(questionText);
+			if (link) {
+				questionText = _.replace(questionText, /<A HREF.*<\/A>/, link);
+			}
+			question.question = _.replace(questionText, /(^'|'$)/g, '');
+
 			if (_.get(options, 'omitAnswers')) {
 				return _.omit(question, 'answer');
 			}

@@ -4,8 +4,6 @@ services:
         build: 
             context: ./postgres
             dockerfile: ./Dockerfile
-        ports:
-            - "5432:5432"
         dns: 
             - 127.0.0.1
         network_mode: "bridge"
@@ -15,7 +13,6 @@ services:
             dockerfile: ./Dockerfile
         command: nodemon --inspect=0.0.0.0:9229 app.js
         ports:
-            - "3000:3000"
             - "9229:9229"
         volumes: 
             - ./server:/src

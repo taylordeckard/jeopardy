@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { find, get, replace, toUpper } from 'lodash-es';
+import { find, get } from 'lodash-es';
 import { mapActions, mapState } from 'vuex';
 import TextInput from './TextInput.vue';
 import Timer from './Timer.vue';
@@ -41,17 +41,7 @@ export default {
     ...mapState('game', { game: state => state.game }),
     ...mapState('game', { username: state => state.username }),
     questionText() {
-      let link;
-      let questionText = this.game.currentQuestion.question;
-      if (/<a href/.test(questionText)) {
-        [link] = questionText.match(/<a href.*<\/a>/);
-        link = replace(link, /a href/, 'a target="_blank" href');
-      }
-      questionText = toUpper(questionText);
-      if (link) {
-        questionText = replace(questionText, /<A HREF.*<\/A>/, link);
-      }
-      return replace(questionText, /(^'|'$)/g, '');
+      return this.game.currentQuestion.question;
     },
     answering() {
       const activePlayer = find(this.game.players, { active: true });
