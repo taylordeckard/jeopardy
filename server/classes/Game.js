@@ -84,6 +84,7 @@ class Game {
 			player.isCorrect = Answer.check(
 				this.grid.questions[FINAL_JEOPARDY].answer,
 				player.finalAnswer,
+				this.grid.questions[FINAL_JEOPARDY],
 			);
 			if (player.isCorrect) {
 				player.score += _.parseInt(player.finalBid || 0);
@@ -126,7 +127,11 @@ class Game {
 	 * @param {string} answer
 	 */
 	submitAnswer (answer) {
-		const isCorrect = Answer.check(_.get(this, 'currentQuestion.answer'), answer);
+		const isCorrect = Answer.check(
+			_.get(this, 'currentQuestion.answer'),
+			answer,
+			this.currentQuestion,
+		);
 		const player = _.find(this.players, { active: true });
 		const points = _.parseInt(_.replace(_.get(this, 'currentQuestion.value'), /^\$/, ''));
 		_.set(player, 'attempted', true);

@@ -10,22 +10,40 @@ module.exports = {
 		realAnswer = _.replace(realAnswer, ARTICLES, ' ');
 		userAnswer = _.replace(userAnswer, ARTICLES, ' ');
 		return {
-			realAnswerTokens: _.split(_.trim(realAnswer), ' '),
-			userAnswerTokens: _.split(_.trim(userAnswer), ' '),
+			realAnswer: _.trim(realAnswer),
+			userAnswer: _.trim(userAnswer),
 		};
 	},
-	check (_realAnswer, _userAnswer) {
-		const { realAnswerTokens, userAnswerTokens } = this.format(_realAnswer, _userAnswer);
+	check (_realAnswer, _userAnswer, card) {
+		const { realAnswer, userAnswer } = this.format(_realAnswer, _userAnswer);
+		const exactMatchSimilarity = stringSimilarity.compareTwoStrings(realAnswer, userAnswer);
+		logger.debug('SIMILARITY: ', exactMatchSimilarity);
+		if (exactMatchSimilarity >= SIMILARITY_THRESHOLD) {
+			// if it's an exact match return true
+			return true;
+		}
+		const realAnswerTokens = _.split(realAnswer, ' ');
+		const userAnswerTokens = _.split(userAnswer, ' ');
 		// real answer and user answer broken up into tokens
 		const isCorrect = _.some(_.map(userAnswerTokens, (uToken) => {
 			// compare the similarity of each user answer to each real answer
-			const similarities = _.map(realAnswerTokens, rToken =>
-				stringSimilarity.compareTwoStrings(rToken, uToken));
-			// if any are above the similarity threshold, we have a match
-			return _.some(similarities, simScore => simScore >= SIMILARITY_THRESHOLD);
+			if (
+				// to reduce false positives, only compare tokens greater than length 3
+				uToken.length > 3
+				// not included in the question
+				&& !_.includes(card.question, uToken)
+				// or the category
+				&& !_.includes(card.category, uToken)
+			) {
+				const similarities = _.map(realAnswerTokens, rToken =>
+					stringSimilarity.compareTwoStrings(rToken, uToken));
+				return _.some(similarities, simScore => simScore >= SIMILARITY_THRESHOLD);
+			}
+
+			return false;
 		}), tokenMatch => tokenMatch);
-		logger.info('REAL ANSWER: ', _realAnswer);
-		logger.info('USER ANSWER: ', _userAnswer);
+		logger.debug('REAL ANSWER: ', realAnswer);
+		logger.debug('USER ANSWER: ', userAnswer);
 		return isCorrect;
 	},
 };
