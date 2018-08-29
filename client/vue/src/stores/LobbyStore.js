@@ -4,6 +4,7 @@ import api from '../api';
 import socket from '../socket';
 import {
   GAME_CHANGED,
+  GAME_CLOSED,
   GAME_CREATED,
   PLAYER_JOINED,
   PLAYER_LEFT,
@@ -50,6 +51,7 @@ export default {
     async subscribe(context) {
       await socket.client.subscribe('/lobby', (msg/* , flags */) => {
         switch (msg.event) {
+          case GAME_CLOSED:
           case GAME_CREATED:
             context.commit('games', msg.games);
             break;

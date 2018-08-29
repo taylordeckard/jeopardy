@@ -10,6 +10,7 @@ export const BUZZ_IN = 'BUZZ_IN';
 export const BUZZ_TIMEOUT = 'BUZZ_TIMEOUT';
 export const CORRECT_ANSWER = 'CORRECT_ANSWER';
 export const GAME_CHANGED = 'GAME_CHANGED';
+export const GAME_CLOSED = 'GAME_CLOSED';
 export const GAME_CREATED = 'GAME_CREATED';
 export const INCORRECT_ANSWER = 'INCORRECT_ANSWER';
 export const PICK_QUESTION = 'PICK_QUESTION';
