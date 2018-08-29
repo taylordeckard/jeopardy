@@ -3,7 +3,12 @@ const _ = require('lodash');
 const Game = require('./Game');
 const qMethods = require('../methods/questions');
 const {
-	EVENTS: { GAME_CLOSED, GAME_CREATED, PLAYER_LEFT, PLAYER_JOINED },
+	EVENTS: {
+		GAME_CLOSED,
+		GAME_CREATED,
+		PLAYER_LEFT,
+		PLAYER_JOINED,
+	},
 } = require('../constants');
 
 /**
@@ -22,8 +27,7 @@ class LobbyState {
 	 * @param {string} host
 	 */
 	async createNewGame (host) {
-		// const showNumber = await qMethods.getRandomShow();
-		const showNumber = 4141;
+		const showNumber = await qMethods.getRandomShow();
 		const grid = await qMethods.getQuestionsByShow(showNumber);
 		const name = `Game ${this.games.length + 1}`;
 		const game = new Game({
