@@ -6,7 +6,7 @@
     <div>CORRECT ANSWER:</div>
     <div class="base-margin-bottom text-yellow">{{ game.currentQuestion.answer }}</div>
     <div class="flex-center-horizontal text-small">
-      <div v-for="(player, idx) in players" :key="idx">
+      <div class="base-margin" v-for="(player, idx) in players" :key="idx">
         <div>
           <div>{{player.username}}</div>
           <div v-if="player.finalAnswer"> ANSWERED</div>
