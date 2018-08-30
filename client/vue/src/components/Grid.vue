@@ -16,6 +16,9 @@
         v-bind:clickable="game.state === 'PRE_START' || isActive"
         v-bind:answered="q.answered"
         v-bind:disabled="q.disabled"
+        v-bind:highlighted="game.currentQuestion
+          && q.question === game.currentQuestion.question
+          && game.showPickedTile"
         v-on:click.native="onQuestionClick(q)"
         textColor="yellow">
       </Card>

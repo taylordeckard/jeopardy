@@ -29,8 +29,8 @@ module.exports = {
 		'showNumber', 'started', 'state',
 	],
 	REGEX: {
-		ARTICLES: /(^a |^the |^of | a | the | of |[/-])/g,
-		BAD_CHARS: /["'.]/g,
+		ARTICLES: /(^a |^the |^of | a | the | of |[/])/g,
+		BAD_CHARS: /["'.-]/g,
 	},
 	ROUNDS: {
 		JEOPARDY: 'Jeopardy!',

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { find } from 'lodash-es';
+import { find, set } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
@@ -129,7 +129,12 @@ export default {
             break;
           }
           case QUESTION_PICKED: {
-            TimeCtrl[QUESTION_PICKED](context, msg.game);
+            const { state } = msg.game;
+            set(msg, 'game.state', PICK_QUESTION);
+            TimeCtrl.showPickedTile(context, msg.game, () => {
+              set(msg, 'game.state', state);
+              TimeCtrl[QUESTION_PICKED](context, msg.game);
+            });
             break;
           }
           case FINAL_BID_TIME_OUT: {

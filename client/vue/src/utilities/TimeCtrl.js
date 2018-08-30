@@ -10,6 +10,7 @@ const BUZZ_IN_TIME_LIMIT = 10;
 const ANSWER_TIME_LIMIT = 10;
 const SHOW_ANSWER_TIME_LIMIT = 3;
 const SHOW_ROUND_TITLE_TIME_LIMIT = 4;
+const SHOW_PICKED_TILE_TIME_LIMIT = 0.75;
 const FINAL_ANSWER_TIME_LIMIT = 30;
 
 export default {
@@ -61,6 +62,9 @@ export default {
   },
   showRoundTitle(context, game) {
     this.startBooleanTimer(context, game, 'showRoundTitle', SHOW_ROUND_TITLE_TIME_LIMIT);
+  },
+  showPickedTile(context, game, callback) {
+    this.startBooleanTimer(context, game, 'showPickedTile', SHOW_PICKED_TILE_TIME_LIMIT, callback);
   },
   startBooleanTimer(context, game, property, limit, callback) {
     Vue.set(game, property, true);

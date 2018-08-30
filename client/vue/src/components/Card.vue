@@ -1,5 +1,5 @@
 <template>
-  <div class="card" v-bind:class="{ answered, clickable, disabled }">
+  <div class="card" v-bind:class="{ answered, clickable, disabled, highlighted }">
     <div class="text text-center absolute-center"
       v-bind:class="{
         yellow: textColor === 'yellow',
@@ -12,7 +12,7 @@
 <script>
 export default {
   name: 'Card',
-  props: ['answered', 'clickable', 'disabled', 'text', 'textColor', 'textSmall'],
+  props: ['answered', 'clickable', 'disabled', 'highlighted', 'text', 'textColor', 'textSmall'],
 };
 </script>
 <style scoped lang="scss">
@@ -24,7 +24,7 @@ export default {
   user-select: none;
   .text {
     font-size: 3vw;
-    transition: font-size .2s;
+    transition: font-size .2s, color .5s;
     &.yellow {
       color: $yellow;
     }
@@ -70,6 +70,13 @@ export default {
     }
     &:hover {
       background: desaturate($bg-color, 75%);
+    }
+  }
+  &.highlighted {
+    background: lighten($bg-color, 30%);
+    .text {
+      color: darken($yellow, 10%);
+      font-size: 4vw;
     }
   }
 }
