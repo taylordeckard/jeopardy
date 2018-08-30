@@ -4,7 +4,7 @@
     type="text"
     v-bind:placeholder="placeholder"
     v-model="model"
-    @keyup="onKeyUp">
+    @keyup.stop="onKeyUp">
 </template>
 <script>
 export default {

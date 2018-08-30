@@ -23,6 +23,15 @@ server.route({
 	},
 });
 
+server.route({
+	method: 'GET',
+	path: '/lobby/usernameTaken',
+	handler: (req) => {
+		const { username } = req.query;
+		return Lobby.checkName(username);
+	},
+});
+
 server.subscription('/lobby', {
 	// filter: (path, msg/* , opts */) => {
 	// 	logger.info(msg);

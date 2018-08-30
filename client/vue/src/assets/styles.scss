@@ -28,6 +28,9 @@
 .title-font {
   @include title-font;
 }
+.clue-font {
+  @include clue-font;
+}
 .text-yellow {
   color: $yellow;
 }

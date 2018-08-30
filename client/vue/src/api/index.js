@@ -1,4 +1,5 @@
 import {
+  CheckNameResource,
   GameResource,
   GamePlayerResource,
   LobbyGamesResource,
@@ -8,6 +9,9 @@ import {
 export default {
   addPlayer(gameId, player, socketId) {
     return GamePlayerResource.save({ gameId }, { player, socketId });
+  },
+  checkUsername(username) {
+    return CheckNameResource.get({ username });
   },
   createGame(username, socketId) {
     return LobbyGamesResource.save({ socketId, username });

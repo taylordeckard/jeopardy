@@ -23,6 +23,10 @@ server.route({
 	handler: (req) => {
 		const socketId = _.get(req, 'payload.socketId');
 		const player = new Player({ username: _.get(req, 'payload.player'), socketId });
+		if (Lobby.checkName(player)) {
+			// usernames must be unique
+			return Boom.badRequest('Username is already in use');
+		}
 		if (!req.params.id || !player || !socketId) {
 			return Boom.badRequest('Missing parameters');
 		}
