@@ -47,8 +47,7 @@ export default {
     async [BUZZ_IN](context) {
       const event = BUZZ_IN;
       const gameId = context.state.game.id;
-      const { username } = context.state;
-      await socket.client.message({ event, gameId, username });
+      await socket.client.message({ event, gameId });
     },
     async getGame(context, gameId) {
       const game = (await api.getGame(gameId)).body;
@@ -165,30 +164,22 @@ export default {
     async [FINAL_ANSWER](context, answer) {
       const event = FINAL_ANSWER;
       const gameId = context.state.game.id;
-      const { username } = context.state;
-      await socket.client.message({
-        event, gameId, username, answer,
-      });
+      await socket.client.message({ event, gameId, answer });
     },
     async [FINAL_ANSWER_TIME_OUT](context) {
       const event = FINAL_ANSWER_TIME_OUT;
       const gameId = context.state.game.id;
-      const { username } = context.state;
-      await socket.client.message({ event, gameId, username });
+      await socket.client.message({ event, gameId });
     },
     async [FINAL_BID](context, bid) {
       const event = FINAL_BID;
       const gameId = context.state.game.id;
-      const { username } = context.state;
-      await socket.client.message({
-        event, gameId, username, bid,
-      });
+      await socket.client.message({ event, gameId, bid });
     },
     async [FINAL_BID_TIME_OUT](context) {
       const event = FINAL_BID_TIME_OUT;
       const gameId = context.state.game.id;
-      const { username } = context.state;
-      await socket.client.message({ event, gameId, username });
+      await socket.client.message({ event, gameId });
     },
     async [PICK_QUESTION](context, questionId) {
       const gameId = context.state.game.id;
@@ -198,8 +189,7 @@ export default {
     async [QUESTION_BUZZ_TIME_OUT](context) {
       const event = QUESTION_BUZZ_TIME_OUT;
       const gameId = context.state.game.id;
-      const { username } = context.state;
-      await socket.client.message({ event, gameId, username });
+      await socket.client.message({ event, gameId });
     },
   },
   getters: {},

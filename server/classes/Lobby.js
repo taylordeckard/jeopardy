@@ -9,6 +9,7 @@ const {
 		PLAYER_LEFT,
 		PLAYER_JOINED,
 	},
+	REGISTRATION_EXPIRATION,
 } = require('../constants');
 
 /**
@@ -60,6 +61,40 @@ class LobbyState {
 		server.publish('/lobby', { event: PLAYER_JOINED, game });
 		server.publish('/game', { event: PLAYER_JOINED, game });
 		return player;
+	}
+
+	/**
+	 * Registers a player to the lobby
+	 * @param {string} username
+	 * @returns {string}
+	 */
+	registerPlayer (username) {
+		const regUser = { username };
+		// store usernames for all active sessions
+		this.registeredUsernames = _.uniqBy(
+			[...(this.registeredUsernames || []), regUser],
+			'username',
+		);
+		regUser.expiry = setTimeout(() => {
+			_.remove(this.registeredUsernames, { username });
+		}, REGISTRATION_EXPIRATION);
+		return username;
+	}
+
+	/**
+	 * Renews a players registration
+	 * @param {string} username
+	 */
+	renewPlayerRegistration (username) {
+		const regUser = _.find(this.registeredUsernames, { username });
+		if (regUser) {
+			// cancel the previous expiration
+			clearTimeout(regUser.expiry);
+			// reset the expiration
+			regUser.expiry = setTimeout(() => {
+				_.remove(this.registeredUsernames, { username });
+			}, REGISTRATION_EXPIRATION);
+		}
 	}
 
 	/**
@@ -119,14 +154,7 @@ class LobbyState {
 	 * @returns {boolean}
 	 */
 	checkName (username) {
-		const nameTaken = _.reduce(this.games, (taken, game) => {
-			if (_.find(game.players, { username })) {
-				taken = true; // eslint-disable-line no-param-reassign
-			}
-			return taken;
-		}, false);
-
-		return nameTaken;
+		return _.includes(_.map(this.registeredUsernames, 'username'), username);
 	}
 }
 

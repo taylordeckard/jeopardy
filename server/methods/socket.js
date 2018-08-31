@@ -24,23 +24,23 @@ module.exports = {
 			break;
 		}
 		case BUZZ_IN: {
-			_.invoke(game, 'buzzIn', msg.username);
+			_.invoke(game, 'buzzIn', game.getUsernameBySocket(socket.id));
 			break;
 		}
 		case FINAL_ANSWER: {
-			_.invoke(game, 'setFinalAnswer', msg.username, msg.answer);
+			_.invoke(game, 'setFinalAnswer', game.getUsernameBySocket(socket.id), msg.answer);
 			break;
 		}
 		case FINAL_ANSWER_TIME_OUT: {
-			_.invoke(game, 'onFinalAnswerTimeout', msg.username);
+			_.invoke(game, 'onFinalAnswerTimeout', game.getUsernameBySocket(socket.id));
 			break;
 		}
 		case FINAL_BID: {
-			_.invoke(game, 'setFinalBid', msg.username, msg.bid);
+			_.invoke(game, 'setFinalBid', game.getUsernameBySocket(socket.id), msg.bid);
 			break;
 		}
 		case FINAL_BID_TIME_OUT: {
-			_.invoke(game, 'onFinalBidTimeout', msg.username);
+			_.invoke(game, 'onFinalBidTimeout', game.getUsernameBySocket(socket.id));
 			break;
 		}
 		case PICK_QUESTION: {
@@ -48,7 +48,7 @@ module.exports = {
 			break;
 		}
 		case QUESTION_BUZZ_TIME_OUT: {
-			_.invoke(game, 'onBuzzTimeout', msg.username);
+			_.invoke(game, 'onBuzzTimeout', game.getUsernameBySocket(socket.id));
 			break;
 		}
 		default:

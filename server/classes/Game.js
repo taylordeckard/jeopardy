@@ -309,6 +309,16 @@ class Game {
 		const player = _.find(this.players, { username });
 		_.set(player, 'finalBid', bid);
 	}
+
+	/**
+	 * Gets a player's username given a socket id
+	 * @param {string} socketId
+	 * @returns {string} username
+	 */
+	getUsernameBySocket (socketId) {
+		const player = _.find(this.players, { socketId });
+		return player.username;
+	}
 }
 
 module.exports = Game;

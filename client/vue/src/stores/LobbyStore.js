@@ -33,8 +33,8 @@ export default {
     },
   },
   actions: {
-    async createGame(context, username) {
-      const games = (await api.createGame(username, context.state.wsClientId)).body;
+    async createGame(context) {
+      const games = (await api.createGame(context.state.wsClientId)).body;
       context.commit('games', games);
       return Promise.resolve();
     },

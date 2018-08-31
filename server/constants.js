@@ -1,3 +1,5 @@
+const minute = 60000;
+
 module.exports = {
 	EVENTS: {
 		ANSWER: 'ANSWER',
@@ -32,6 +34,7 @@ module.exports = {
 		ARTICLES: /(^a |^the |^of | a | the | of |[/])/g,
 		BAD_CHARS: /["'.-]/g,
 	},
+	REGISTRATION_EXPIRATION: 10 * minute,
 	ROUNDS: {
 		JEOPARDY: 'Jeopardy!',
 		DOUBLE_JEOPARDY: 'Double Jeopardy!',

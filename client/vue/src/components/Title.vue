@@ -8,17 +8,17 @@
       <TextInput
         class="text-center"
         v-on:model-change="onNicknameChange"
+        v-on:enter-key="start"
         placeholder="Enter a Nickname"></TextInput>
     </div>
     <transition name="fade">
-      <a v-if="showLink" class="link" v-on:click="goToLobby">START</a>
+      <a v-if="showLink" class="link" v-on:click="start">START</a>
     </transition>
     <br>
   </div>
 </template>
 <script>
 import { mapMutations } from 'vuex';
-import { debounce } from 'lodash-es';
 import TextInput from './TextInput.vue';
 import api from '../api';
 
@@ -29,36 +29,30 @@ export default {
   },
   data() {
     return {
+      nickname: '',
       showLink: false,
       showNameTaken: false,
-      nameTaken: true,
     };
   },
   methods: {
     ...mapMutations('game', ['username']),
-    goToLobby() {
-      if (!this.nameTaken) {
+    async start() {
+      try {
+        await api.registerUsername(this.nickname);
         this.$router.push('/lobby');
+      } catch (e) {
+        this.showNameTaken = true;
       }
     },
     async onNicknameChange(nickname) {
-      this.nameTaken = true;
-      const debouncedFn = debounce(async () => {
-        if (nickname) {
-          this.nameTaken = (await api.checkUsername(nickname)).body;
-          if (!this.nameTaken) {
-            this.showLink = true;
-            this.showNameTaken = false;
-          } else {
-            this.showLink = false;
-            this.showNameTaken = true;
-          }
-        } else {
-          this.showLink = false;
-        }
-        this.username(nickname);
-      }, 500);
-      await debouncedFn();
+      this.showNameTaken = false;
+      if (nickname) {
+        this.showLink = true;
+      } else {
+        this.showLink = false;
+      }
+      this.username(nickname);
+      this.nickname = nickname;
     },
   },
 };

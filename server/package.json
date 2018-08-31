@@ -17,7 +17,8 @@
     "nes": "^9.0.1",
     "pg": "^7.4.3",
     "string-similarity": "^1.2.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "yar": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"

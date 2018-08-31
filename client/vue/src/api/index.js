@@ -1,20 +1,20 @@
 import {
-  CheckNameResource,
   GameResource,
   GamePlayerResource,
   LobbyGamesResource,
   QuestionsResource,
+  RegisterUsernameResource,
 } from './resources';
 
 export default {
   addPlayer(gameId, player, socketId) {
     return GamePlayerResource.save({ gameId }, { player, socketId });
   },
-  checkUsername(username) {
-    return CheckNameResource.get({ username });
+  registerUsername(username) {
+    return RegisterUsernameResource.save({ username });
   },
-  createGame(username, socketId) {
-    return LobbyGamesResource.save({ socketId, username });
+  createGame(socketId) {
+    return LobbyGamesResource.save({ socketId });
   },
   getQuestions(showNumber) {
     return QuestionsResource.get({ showNumber });

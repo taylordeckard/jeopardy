@@ -1,15 +1,22 @@
 const logger = require('./logger');
 const { server } = require('./server');
 const Nes = require('nes');
+const Yar = require('yar');
+const yarOptions = require('./config/session-config');
 const socketOptions = require('./methods/socket');
 
 // load server routes
 const loadRoutes = async () => {
 	await server.register({ plugin: Nes, options: socketOptions });
+	await server.register({ plugin: Yar, options: yarOptions });
 	/* eslint-disable global-require */
+	// extensions
+	require('./extensions/renewUserRegistration');
+	// routes
 	require('./routes/lobbyRoute');
 	require('./routes/gamesRoute');
 	require('./routes/questionsRoute');
+	require('./routes/userRoute');
 	/* eslint-enable global-require */
 	return Promise.resolve();
 };
