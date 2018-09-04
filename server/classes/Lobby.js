@@ -137,6 +137,7 @@ class LobbyState {
 	removePlayer (id, player) {
 		const game = _.find(this.games, { id });
 		_.remove(game.players, { socketId: player.socketId });
+		_.remove(this.registeredUsernames, { username: player.username });
 		if (!game.players.length) {
 			this.removeGame(game.id);
 		}

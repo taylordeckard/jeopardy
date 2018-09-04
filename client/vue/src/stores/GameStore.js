@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { find, set } from 'lodash-es';
+import { each, find, get, set } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
@@ -7,7 +7,7 @@ import {
   FINAL_BID, FINAL_BID_TIME_OUT, FINAL_QUESTION, INCORRECT_ANSWER, PICK_QUESTION,
   PLAYER_JOINED, PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
 } from '../events';
-import { TimeCtrl } from '../utilities';
+import { ImagePreloader, TimeCtrl } from '../utilities';
 
 export default {
   namespaced: true,
@@ -56,6 +56,7 @@ export default {
     },
     async getQuestions(context, showNumber) {
       const show = (await api.getQuestions(showNumber)).body;
+      each(show.questions, qs => ImagePreloader.preload(qs));
       context.commit('questions', show.questions[context.state.game.round]);
       context.commit('categories', show.categories[context.state.game.round]);
       context.commit('show', show);
@@ -68,7 +69,7 @@ export default {
       context.commit('wsClientId', socket.client.id);
     },
     async subscribe(context) {
-      await socket.client.subscribe('/game', (msg/* , flags */) => {
+      await socket.client.subscribe('/game', async (msg/* , flags */) => {
         switch (msg.event) {
           case CORRECT_ANSWER: {
             let startNextRound = false;
@@ -80,11 +81,10 @@ export default {
             const { id } = context.state.game.currentQuestion;
             const question = find(context.state.show.questions[context.state.game.round], { id });
             question.answered = true;
-            TimeCtrl[CORRECT_ANSWER](context, msg.game, () => {
-              if (startNextRound) {
-                TimeCtrl.showRoundTitle(context, msg.game);
-              }
-            });
+            await TimeCtrl[CORRECT_ANSWER](context, msg.game);
+            if (startNextRound) {
+              TimeCtrl.showRoundTitle(context, msg.game);
+            }
             break;
           }
           case INCORRECT_ANSWER: {
@@ -99,11 +99,10 @@ export default {
               const question = find(context.state.show.questions[context.state.game.round], { id });
               question.answered = true;
             }
-            TimeCtrl[INCORRECT_ANSWER](context, msg.game, () => {
-              if (startNextRound) {
-                TimeCtrl.showRoundTitle(context, msg.game);
-              }
-            });
+            await TimeCtrl[INCORRECT_ANSWER](context, msg.game);
+            if (startNextRound) {
+              TimeCtrl.showRoundTitle(context, msg.game);
+            }
             break;
           }
           case BUZZ_IN: {
@@ -120,20 +119,30 @@ export default {
             const { id } = context.state.game.currentQuestion;
             const question = find(context.state.show.questions[context.state.game.round], { id });
             question.answered = true;
-            TimeCtrl[BUZZ_TIMEOUT](context, msg.game, () => {
-              if (startNextRound) {
-                TimeCtrl.showRoundTitle(context, msg.game);
-              }
-            });
+            await TimeCtrl[BUZZ_TIMEOUT](context, msg.game);
+            if (startNextRound) {
+              TimeCtrl.showRoundTitle(context, msg.game);
+            }
             break;
           }
           case QUESTION_PICKED: {
-            const { state } = msg.game;
+            const { currentQuestion, state } = msg.game;
+            const { id } = currentQuestion;
+            const question = find(context.state.show.questions[context.state.game.round], { id });
             set(msg, 'game.state', PICK_QUESTION);
-            TimeCtrl.showPickedTile(context, msg.game, () => {
-              set(msg, 'game.state', state);
-              TimeCtrl[QUESTION_PICKED](context, msg.game);
-            });
+            await TimeCtrl.showPickedTile(context, msg.game);
+            if (get(question, 'images.length')) {
+              Vue.set(context.state.game, 'showImageClue', true);
+              for (let i = 0; i < question.images.length; i += 1) {
+                // show all of the image clues before showing the question
+                Vue.set(context.state.game, 'imageClueSrc', question.images[i]);
+                // eslint-disable-next-line no-await-in-loop
+                await TimeCtrl.showImageClue(context, msg.game);
+              }
+              Vue.set(context.state.game, 'showImageClue', false);
+            }
+            set(msg, 'game.state', state);
+            TimeCtrl[QUESTION_PICKED](context, msg.game);
             break;
           }
           case FINAL_BID_TIME_OUT: {

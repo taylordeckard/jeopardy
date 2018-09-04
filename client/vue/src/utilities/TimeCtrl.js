@@ -11,43 +11,43 @@ const ANSWER_TIME_LIMIT = 10;
 const SHOW_ANSWER_TIME_LIMIT = 3;
 const SHOW_ROUND_TITLE_TIME_LIMIT = 4;
 const SHOW_PICKED_TILE_TIME_LIMIT = 0.75;
+const SHOW_IMAGE_CLUE_TIME_LIMIT = 2;
 const FINAL_ANSWER_TIME_LIMIT = 30;
 
 export default {
   [BUZZ_IN](context, game) {
     this.killTimers();
-    this.startTimer(context, game, ANSWER_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
+    return this.startTimer(context, game, ANSWER_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
   },
-  [BUZZ_TIMEOUT](context, game, callback) {
+  [BUZZ_TIMEOUT](context, game) {
     this.killTimers();
-    this.showAnswer(context, game, callback);
+    return this.showAnswer(context, game);
   },
   [QUESTION_PICKED](context, game) {
     this.killTimers();
-    this.startTimer(context, game, BUZZ_IN_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
+    return this.startTimer(context, game, BUZZ_IN_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
   },
-  [CORRECT_ANSWER](context, game, callback) {
+  [CORRECT_ANSWER](context, game) {
     this.killTimers();
-    this.showAnswer(context, game, callback);
+    return this.showAnswer(context, game);
   },
   [FINAL](context, game) {
     this.killTimers();
-    this.startTimer(context, game, BID_TIME_LIMIT, FINAL_BID_TIME_OUT);
+    return this.startTimer(context, game, BID_TIME_LIMIT, FINAL_BID_TIME_OUT);
   },
   [FINAL_ANSWER](context, game) {
     this.killTimers();
-    this.startTimer(context, game, FINAL_ANSWER_TIME_LIMIT, FINAL_ANSWER_TIME_OUT);
+    return this.startTimer(context, game, FINAL_ANSWER_TIME_LIMIT, FINAL_ANSWER_TIME_OUT);
   },
-  [INCORRECT_ANSWER](context, game, callback) {
+  async [INCORRECT_ANSWER](context, game) {
     this.killTimers();
     if (!game.allPlayersAttempted) {
       // show the incorrect answer
-      this.showAnswer(context, game, () => {
-        this.startTimer(context, game, BUZZ_IN_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
-      });
-    } else {
-      this.showAnswer(context, game, callback);
+      await this.showAnswer(context, game);
+      return this.startTimer(context, game, BUZZ_IN_TIME_LIMIT, QUESTION_BUZZ_TIME_OUT);
     }
+
+    return this.showAnswer(context, game);
   },
   killTimers() {
     if (this.countdownInterval) {
@@ -56,29 +56,75 @@ export default {
     if (this.countdownTimer) {
       clearTimeout(this.countdownTimer);
     }
+    if (this.cancelTimerPromise) {
+      this.cancelTimerPromise();
+    }
   },
-  showAnswer(context, game, callback) {
-    this.startBooleanTimer(context, game, 'showAnswer', SHOW_ANSWER_TIME_LIMIT, callback);
+  showAnswer(context, game) {
+    return new Promise((resolve, reject) => {
+      this.cancelTimerPromise = reject;
+      this.startBooleanTimer(
+        context,
+        game,
+        'showAnswer',
+        SHOW_ANSWER_TIME_LIMIT,
+        resolve,
+      );
+    });
   },
   showRoundTitle(context, game) {
-    this.startBooleanTimer(context, game, 'showRoundTitle', SHOW_ROUND_TITLE_TIME_LIMIT);
+    return new Promise((resolve, reject) => {
+      this.cancelTimerPromise = reject;
+      this.startBooleanTimer(
+        context,
+        game,
+        'showRoundTitle',
+        SHOW_ROUND_TITLE_TIME_LIMIT,
+        resolve,
+      );
+    });
   },
-  showPickedTile(context, game, callback) {
-    this.startBooleanTimer(context, game, 'showPickedTile', SHOW_PICKED_TILE_TIME_LIMIT, callback);
+  showImageClue(context, game) {
+    return new Promise((resolve, reject) => {
+      this.cancelTimerPromise = reject;
+      this.startBooleanTimer(
+        context,
+        game,
+        null,
+        SHOW_IMAGE_CLUE_TIME_LIMIT,
+        resolve,
+      );
+    });
   },
-  startBooleanTimer(context, game, property, limit, callback) {
-    Vue.set(game, property, true);
+  showPickedTile(context, game) {
+    return new Promise((resolve, reject) => {
+      this.cancelTimerPromise = reject;
+      this.startBooleanTimer(
+        context,
+        game,
+        'showPickedTile',
+        SHOW_PICKED_TILE_TIME_LIMIT,
+        resolve,
+      );
+    });
+  },
+  startBooleanTimer(context, game, property, limit, resolve) {
+    if (property) {
+      Vue.set(game, property, true);
+    }
     context.commit('game', game);
     this.countdownTimer = setTimeout(() => {
       const currentGame = context.state.game;
-      Vue.set(currentGame, property, false);
+      if (property) {
+        Vue.set(currentGame, property, false);
+      }
       context.commit('game', currentGame);
-      if (callback) {
-        callback();
+      if (resolve) {
+        resolve();
       }
     }, SECOND * limit);
   },
-  startTimer(context, game, limit, dispatcher, callback) {
+  startTimer(context, game, limit, dispatcher, resolve) {
     Vue.set(game, 'timerOn', true);
     Vue.set(game, 'timer', limit);
     Vue.set(game, 'timerLimit', limit);
@@ -94,8 +140,8 @@ export default {
       context.commit('game', currentGame);
       clearInterval(this.countdownInterval); // cancel countdown
       context.dispatch(dispatcher);
-      if (callback) {
-        callback();
+      if (resolve) {
+        resolve();
       }
     }, SECOND * limit);
   },

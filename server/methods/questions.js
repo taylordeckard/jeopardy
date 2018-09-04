@@ -92,18 +92,8 @@ module.exports = {
 			question.answer = _.replace(question.answer, /\\'/, '\'');
 			// remove anything within parentheses in the answer
 			question.answer = _.replace(question.answer, /\(.*\)/, '');
-			// capitalize the question
-			let link;
-			let questionText = question.question;
-			if (/<a href/.test(questionText)) {
-				[link] = questionText.match(/<a href.*<\/a>/);
-				link = _.replace(link, /a href/, 'a target="_blank" href');
-			}
-			questionText = _.toUpper(questionText);
-			if (link) {
-				questionText = _.replace(questionText, /<A HREF.*<\/A>/, link);
-			}
-			question.question = _.replace(questionText, /(^'|'$)/g, '');
+			// format the question
+			this.formatQuestion(question);
 
 			if (_.get(options, 'omitAnswers')) {
 				return _.omit(question, 'answer');
@@ -120,5 +110,45 @@ module.exports = {
 		};
 
 		return { categories, questions };
+	},
+
+	/**
+	 * Manipulates the multimedia links in the jeopardy questions
+	 * @param {any} question
+	 */
+	formatQuestion (question) {
+		let text = question.question;
+		let links;
+		let questionText = text;
+		if (/<a href/.test(questionText)) {
+			links = questionText.match(/(<a href="(.*?)">.*?<\/a>?)/g);
+			links = _.map(links, (link) => {
+				let l = _.replace(link, /a href/, 'a target="_blank" href');
+				const itMatch = l.match(/href.*?>(.*?)<\/a>/);
+				const hrefMatch = l.match(/href="(.*?)"/);
+				if (itMatch) {
+					let innerText = _.get(itMatch, `[${itMatch.length - 1}]`);
+					// l = _.replace(l, new RegExp(innerText), _.toUpper(innerText));
+					// remove the html link
+					l = _.toUpper(innerText);
+				}
+				if (hrefMatch) {
+					// attach the links to the question object
+					question.links = [
+						_.get(hrefMatch, `[${hrefMatch.length - 1}]`),
+						...(question.links || []),
+					];
+				}
+				return l;
+			});
+		}
+		// capitalize the question
+		questionText = _.toUpper(questionText);
+		if (links) {
+			_.each(links, (link) => {
+				questionText = _.replace(questionText, /<A HREF.*?<\/A>/, link);
+			});
+		}
+		question.question = _.replace(questionText, /(^'|'$)/g, '');
 	},
 };

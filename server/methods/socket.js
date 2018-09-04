@@ -18,6 +18,7 @@ module.exports = {
 	onMessage (socket, msg) {
 		logger.debug(`MESSAGE RECIEVED: ${msg.event}`);
 		const game = Lobby.getGameById(msg.gameId, { allFields: true });
+		Lobby.renewPlayerRegistration(game.getUsernameBySocket(socket.id));
 		switch (msg.event) {
 		case ANSWER: {
 			_.invoke(game, 'submitAnswer', msg.answer);

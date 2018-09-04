@@ -5,24 +5,28 @@
       <transition name="fade-in">
         <Grid v-if="
           (game.state === 'PRE_START' || game.state === 'PICK_QUESTION')
-          && !game.showAnswer && !game.showRoundTitle">
+          && !game.showAnswer && !game.showRoundTitle && !game.showImageClue">
         </Grid>
       </transition>
       <transition name="fade-in">
         <Question v-if="
           (game.state === 'QUESTION' || game.state === 'ANSWER')
-          && !game.showAnswer && !game.showRoundTitle">
+          && !game.showAnswer && !game.showRoundTitle && !game.showImageClue">
         </Question>
       </transition>
       <Round v-if="game.showRoundTitle"></Round>
-      <FinalBid v-if="game.state === 'FINAL' && !game.showAnswer && !game.showRoundTitle">
+      <transition name="fade">
+        <ImageClue v-if="game.showImageClue"></ImageClue>
+      </transition>
+      <FinalBid v-if="game.state === 'FINAL'
+        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue">
       </FinalBid>
       <FinalQuestion v-if="
         game.state === 'FINAL_QUESTION'
-        && !game.showAnswer && !game.showRoundTitle"></FinalQuestion>
+        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue"></FinalQuestion>
       <GameResults v-if="
         game.state === 'GAME_RESULTS'
-        && !game.showAnswer && !game.showRoundTitle"></GameResults>
+        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue"></GameResults>
     </div>
     <Loader v-if="isLoading"></Loader>
     <div class="players-bar">
@@ -42,6 +46,7 @@ import Loader from './Loader.vue';
 import Players from './Players.vue';
 import Question from './Question.vue';
 import Round from './Round.vue';
+import ImageClue from './ImageClue.vue';
 
 export default {
   name: 'Game',
@@ -51,6 +56,7 @@ export default {
     FinalQuestion,
     GameResults,
     Grid,
+    ImageClue,
     Loader,
     Players,
     Question,

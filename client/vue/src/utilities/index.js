@@ -1,3 +1,5 @@
 import timeCtrl from './TimeCtrl';
+import imagePreloader from './ImagePreloader';
 
-export const TimeCtrl = timeCtrl; // eslint-disable-line
+export const TimeCtrl = timeCtrl;
+export const ImagePreloader = imagePreloader;
