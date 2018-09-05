@@ -84,6 +84,18 @@ export default {
       );
     });
   },
+  showAudioVideoClue(context, game, audioClipLength) {
+    return new Promise((resolve, reject) => {
+      this.cancelTimerPromise = reject;
+      this.startBooleanTimer(
+        context,
+        game,
+        null,
+        audioClipLength,
+        resolve,
+      );
+    });
+  },
   showImageClue(context, game) {
     return new Promise((resolve, reject) => {
       this.cancelTimerPromise = reject;

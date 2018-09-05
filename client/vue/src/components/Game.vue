@@ -5,28 +5,39 @@
       <transition name="fade-in">
         <Grid v-if="
           (game.state === 'PRE_START' || game.state === 'PICK_QUESTION')
-          && !game.showAnswer && !game.showRoundTitle && !game.showImageClue">
+          && !game.showAnswer && !game.showRoundTitle && !game.showImageClue
+          && !game.showAudioClue && !game.showVideoClue">
         </Grid>
       </transition>
       <transition name="fade-in">
         <Question v-if="
           (game.state === 'QUESTION' || game.state === 'ANSWER')
-          && !game.showAnswer && !game.showRoundTitle && !game.showImageClue">
+          && !game.showAnswer && !game.showRoundTitle && !game.showImageClue
+          && !game.showAudioClue && !game.showVideoClue">
         </Question>
       </transition>
       <Round v-if="game.showRoundTitle"></Round>
       <transition name="fade">
+        <AudioClue v-if="game.showAudioClue"></AudioClue>
+      </transition>
+      <transition name="fade">
         <ImageClue v-if="game.showImageClue"></ImageClue>
       </transition>
+      <transition name="fade">
+        <VideoClue v-if="game.showVideoClue"></VideoClue>
+      </transition>
       <FinalBid v-if="game.state === 'FINAL'
-        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue">
+        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue
+        && !game.showAudioClue && !game.showVideoClue">
       </FinalBid>
       <FinalQuestion v-if="
         game.state === 'FINAL_QUESTION'
-        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue"></FinalQuestion>
+        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue
+        && !game.showAudioClue && !game.showVideoClue"></FinalQuestion>
       <GameResults v-if="
         game.state === 'GAME_RESULTS'
-        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue"></GameResults>
+        && !game.showAnswer && !game.showRoundTitle && !game.showImageClue
+        && !game.showAudioClue && !game.showVideoClue"></GameResults>
     </div>
     <Loader v-if="isLoading"></Loader>
     <div class="players-bar">
@@ -46,12 +57,15 @@ import Loader from './Loader.vue';
 import Players from './Players.vue';
 import Question from './Question.vue';
 import Round from './Round.vue';
+import AudioClue from './AudioClue.vue';
 import ImageClue from './ImageClue.vue';
+import VideoClue from './VideoClue.vue';
 
 export default {
   name: 'Game',
   components: {
     Answer,
+    AudioClue,
     FinalBid,
     FinalQuestion,
     GameResults,
@@ -61,6 +75,7 @@ export default {
     Players,
     Question,
     Round,
+    VideoClue,
   },
   data() {
     return {

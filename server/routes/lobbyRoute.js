@@ -16,7 +16,7 @@ server.route({
 	handler: async (req) => {
 		const host = new Player({
 			socketId: _.get(req, 'payload.socketId'),
-			username: req.yar.get('username'),
+			username: _.get(req, 'payload.username'),
 		});
 		await Lobby.createNewGame(host);
 		return Lobby.getGames();

@@ -207,7 +207,7 @@ class Game {
 			if (this.lastPicker) {
 				this.lastPicker.active = true;
 			}
-			this.currentQuestion.answered = true;
+			_.set(this, 'currentQuestion.answered', true);
 			if (this.areAllQuestionsAnswered()) {
 				this.advanceRound();
 			}

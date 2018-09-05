@@ -18,30 +18,30 @@ module.exports = {
 	onMessage (socket, msg) {
 		logger.debug(`MESSAGE RECIEVED: ${msg.event}`);
 		const game = Lobby.getGameById(msg.gameId, { allFields: true });
-		Lobby.renewPlayerRegistration(game.getUsernameBySocket(socket.id));
+		Lobby.renewPlayerRegistration(msg.username);
 		switch (msg.event) {
 		case ANSWER: {
 			_.invoke(game, 'submitAnswer', msg.answer);
 			break;
 		}
 		case BUZZ_IN: {
-			_.invoke(game, 'buzzIn', game.getUsernameBySocket(socket.id));
+			_.invoke(game, 'buzzIn', msg.username);
 			break;
 		}
 		case FINAL_ANSWER: {
-			_.invoke(game, 'setFinalAnswer', game.getUsernameBySocket(socket.id), msg.answer);
+			_.invoke(game, 'setFinalAnswer', msg.username, msg.answer);
 			break;
 		}
 		case FINAL_ANSWER_TIME_OUT: {
-			_.invoke(game, 'onFinalAnswerTimeout', game.getUsernameBySocket(socket.id));
+			_.invoke(game, 'onFinalAnswerTimeout', msg.username);
 			break;
 		}
 		case FINAL_BID: {
-			_.invoke(game, 'setFinalBid', game.getUsernameBySocket(socket.id), msg.bid);
+			_.invoke(game, 'setFinalBid', msg.username, msg.bid);
 			break;
 		}
 		case FINAL_BID_TIME_OUT: {
-			_.invoke(game, 'onFinalBidTimeout', game.getUsernameBySocket(socket.id));
+			_.invoke(game, 'onFinalBidTimeout', msg.username);
 			break;
 		}
 		case PICK_QUESTION: {
@@ -49,7 +49,7 @@ module.exports = {
 			break;
 		}
 		case QUESTION_BUZZ_TIME_OUT: {
-			_.invoke(game, 'onBuzzTimeout', game.getUsernameBySocket(socket.id));
+			_.invoke(game, 'onBuzzTimeout', msg.username);
 			break;
 		}
 		default:

@@ -13,8 +13,8 @@ export default {
   registerUsername(username) {
     return RegisterUsernameResource.save({ username });
   },
-  createGame(socketId) {
-    return LobbyGamesResource.save({ socketId });
+  createGame(socketId, username) {
+    return LobbyGamesResource.save({ socketId, username });
   },
   getQuestions(showNumber) {
     return QuestionsResource.get({ showNumber });

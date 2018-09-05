@@ -7,7 +7,7 @@ import {
   FINAL_BID, FINAL_BID_TIME_OUT, FINAL_QUESTION, INCORRECT_ANSWER, PICK_QUESTION,
   PLAYER_JOINED, PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
 } from '../events';
-import { ImagePreloader, TimeCtrl } from '../utilities';
+import { AudioPreloader, ImagePreloader, TimeCtrl, VideoPreloader } from '../utilities';
 
 export default {
   namespaced: true,
@@ -47,7 +47,8 @@ export default {
     async [BUZZ_IN](context) {
       const event = BUZZ_IN;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId });
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
     },
     async getGame(context, gameId) {
       const game = (await api.getGame(gameId)).body;
@@ -57,6 +58,8 @@ export default {
     async getQuestions(context, showNumber) {
       const show = (await api.getQuestions(showNumber)).body;
       each(show.questions, qs => ImagePreloader.preload(qs));
+      each(show.questions, qs => AudioPreloader.preload(qs));
+      each(show.questions, qs => VideoPreloader.preload(qs));
       context.commit('questions', show.questions[context.state.game.round]);
       context.commit('categories', show.categories[context.state.game.round]);
       context.commit('show', show);
@@ -141,6 +144,26 @@ export default {
               }
               Vue.set(context.state.game, 'showImageClue', false);
             }
+            if (get(question, 'audio.length')) {
+              Vue.set(context.state.game, 'showAudioClue', true);
+              for (let i = 0; i < question.audio.length; i += 1) {
+                // show all of the audio clues before showing the question
+                Vue.set(context.state.game, 'audioClueSrc', question.audio[i].link);
+                // eslint-disable-next-line no-await-in-loop
+                await TimeCtrl.showAudioVideoClue(context, msg.game, question.audio[i].duration);
+              }
+              Vue.set(context.state.game, 'showAudioClue', false);
+            }
+            if (get(question, 'video.length')) {
+              Vue.set(context.state.game, 'showVideoClue', true);
+              for (let i = 0; i < question.video.length; i += 1) {
+                // show all of the video clues before showing the question
+                Vue.set(context.state.game, 'videoClueSrc', question.video[i].link);
+                // eslint-disable-next-line no-await-in-loop
+                await TimeCtrl.showAudioVideoClue(context, msg.game, question.video[i].duration);
+              }
+              Vue.set(context.state.game, 'showVideoClue', false);
+            }
             set(msg, 'game.state', state);
             TimeCtrl[QUESTION_PICKED](context, msg.game);
             break;
@@ -165,7 +188,10 @@ export default {
     async [ANSWER](context, answer) {
       const event = ANSWER;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId, answer });
+      const { username } = context.state;
+      await socket.client.message({
+        event, gameId, answer, username,
+      });
     },
     async [FINAL](context) {
       TimeCtrl[FINAL](context, context.state.game);
@@ -173,32 +199,44 @@ export default {
     async [FINAL_ANSWER](context, answer) {
       const event = FINAL_ANSWER;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId, answer });
+      const { username } = context.state;
+      await socket.client.message({
+        event, gameId, answer, username,
+      });
     },
     async [FINAL_ANSWER_TIME_OUT](context) {
       const event = FINAL_ANSWER_TIME_OUT;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId });
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
     },
     async [FINAL_BID](context, bid) {
       const event = FINAL_BID;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId, bid });
+      const { username } = context.state;
+      await socket.client.message({
+        event, gameId, bid, username,
+      });
     },
     async [FINAL_BID_TIME_OUT](context) {
       const event = FINAL_BID_TIME_OUT;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId });
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
     },
     async [PICK_QUESTION](context, questionId) {
       const gameId = context.state.game.id;
       const event = PICK_QUESTION;
-      await socket.client.message({ event, gameId, questionId });
+      const { username } = context.state;
+      await socket.client.message({
+        event, gameId, questionId, username,
+      });
     },
     async [QUESTION_BUZZ_TIME_OUT](context) {
       const event = QUESTION_BUZZ_TIME_OUT;
       const gameId = context.state.game.id;
-      await socket.client.message({ event, gameId });
+      const { username } = context.state;
+      await socket.client.message({ event, gameId, username });
     },
   },
   getters: {},
