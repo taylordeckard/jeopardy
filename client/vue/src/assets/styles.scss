@@ -113,6 +113,10 @@
 .flex-center-vertical {
   @include flex-center-vertical;
 }
+.flex-center {
+  @include flex-center-vertical;
+  @include flex-center-horizontal;
+}
 
 
 /**

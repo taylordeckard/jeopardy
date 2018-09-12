@@ -9,14 +9,20 @@
         <div class="game-title base-margin">{{ game.name }}</div>
         <Players v-bind:players="game.players"></Players>
       </div>
-      <div class="base-margin-top" v-if="!isHost">
-        <a class="link" v-on:click="createGameAndEnter()">CREATE GAME</a>
+      <div class="base-margin-top" v-if="pickYear">
+        <YearPicker v-bind:years="years" v-on:clickedStart="createGameAndEnter"></YearPicker>
+      </div>
+      <div class="base-margin-top" v-if="!isHost && !pickYear">
+        <a class="link" v-on:click="pickYear = true">CREATE GAME</a>
       </div>
     </div>
     <div v-else class="text-center absolute-center">
       <div class="text-large">NO GAMES AVAILABLE</div>
-      <div class="base-margin-top" v-if="!isHost">
-        <a class="link" v-on:click="createGameAndEnter()">CREATE GAME</a>
+      <div class="base-margin-top" v-if="pickYear">
+        <YearPicker v-bind:years="years" v-on:clickedStart="createGameAndEnter"></YearPicker>
+      </div>
+      <div class="base-margin-top" v-if="!isHost && !pickYear">
+        <a class="link" v-on:click="pickYear = true">CREATE GAME</a>
       </div>
     </div>
   </div>
@@ -25,11 +31,14 @@
 import { mapActions, mapState } from 'vuex';
 import { find } from 'lodash-es';
 import Players from './Players.vue';
+import YearPicker from './YearPicker.vue';
+import api from '../api';
 
 export default {
   name: 'Lobby',
   components: {
     Players,
+    YearPicker,
   },
   async created() {
     if (!this.username) {
@@ -39,6 +48,13 @@ export default {
     await this.getGames();
     await this.getSocket();
     await this.subscribe();
+    this.years = (await api.getYears()).body;
+  },
+  data() {
+    return {
+      pickYear: false,
+      years: null,
+    };
   },
   async destroyed() {
     await this.unsubscribe();
@@ -59,8 +75,9 @@ export default {
     goToGame(gameId) {
       this.$router.push(`/game/${gameId}`);
     },
-    async createGameAndEnter() {
-      await this.createGame(this.username);
+    async createGameAndEnter(year) {
+      const ops = { username: this.username, year: year !== 'Random' ? year : null };
+      await this.createGame(ops);
       const justCreatedGame = find(this.games, g => g.host.username === this.username);
       this.$router.push(`/game/${justCreatedGame.id}`);
     },

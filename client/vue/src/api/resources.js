@@ -12,6 +12,7 @@ Vue.http.interceptors.push((request, next) => {
 });
 
 export const QuestionsResource = Vue.resource('/api/questions/{showNumber}');
+export const QuestionsYearsResource = Vue.resource('/api/questions/years');
 export const GameResource = Vue.resource('/api/game/{gameId}');
 export const GamePlayerResource = Vue.resource('/api/game/{gameId}/player');
 export const LobbyGamesResource = Vue.resource('/api/lobby/games');

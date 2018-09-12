@@ -18,7 +18,7 @@ server.route({
 			socketId: _.get(req, 'payload.socketId'),
 			username: _.get(req, 'payload.username'),
 		});
-		await Lobby.createNewGame(host);
+		await Lobby.createNewGame(host, _.get(req, 'payload.year'));
 		return Lobby.getGames();
 	},
 });

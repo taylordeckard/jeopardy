@@ -26,9 +26,10 @@ class LobbyState {
 	/**
 	 * Adds a new lobby game
 	 * @param {string} host
+	 * @param {string} year (optional)
 	 */
-	async createNewGame (host) {
-		const showNumber = await qMethods.getRandomShow();
+	async createNewGame (host, year) {
+		const showNumber = await qMethods.getRandomShow(year);
 		const grid = await qMethods.getQuestionsByShow(showNumber);
 		const name = `Game ${this.games.length + 1}`;
 		const game = new Game({

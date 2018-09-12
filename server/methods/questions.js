@@ -2,17 +2,37 @@ const _ = require('lodash');
 const db = require('../db');
 const { ROUNDS: { JEOPARDY, DOUBLE_JEOPARDY, FINAL_JEOPARDY } } = require('../constants');
 
+let allShowNumbers, allYears;
+
 module.exports = {
 	async getTotal () {
 		const result = await db.pool.query('SELECT COUNT(*) FROM questions');
 		return result.rows[0].count;
 	},
-	async getShowNumbers () {
-		const result = await db.pool.query('SELECT DISTINCT(show_number) FROM questions ORDER BY show_number');
+	async getShowNumbers (year) {
+		let result;
+		if (year) {
+			const q = 'SELECT DISTINCT(show_number) FROM questions WHERE year=$1 ORDER BY show_number';
+			result = await db.pool.query(q, [year]);
+		} else {
+			if (allShowNumbers) {
+				return allShowNumbers;
+			}
+			result = await db.pool.query('SELECT DISTINCT(show_number) FROM questions ORDER BY show_number');
+			allShowNumbers = result.rows;
+		}
 		return result.rows;
 	},
-	async getRandomShow () {
-		const showNumbers = await this.getShowNumbers();
+	async getYears () {
+		if (allYears) {
+			return allYears;
+		}
+		const result = await db.pool.query('SELECT DISTINCT(year) FROM questions ORDER BY year DESC');
+		allYears = result.rows;
+		return allYears;
+	},
+	async getRandomShow (year) {
+		const showNumbers = await this.getShowNumbers(year);
 		return _.get(showNumbers, [_.random(0, showNumbers.length), 'show_number']);
 	},
 	async getQuestionsByShow (showNumber, options) {

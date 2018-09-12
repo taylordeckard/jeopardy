@@ -25,3 +25,13 @@ server.route({
 		}
 	},
 });
+
+/**
+ * Gets list of distinct years for all questions
+ * (so players can pick which year they want to play)
+ */
+server.route({
+	method: 'GET',
+	path: '/questions/years',
+	handler: async () => qMethods.getYears(),
+});
