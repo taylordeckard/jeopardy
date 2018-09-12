@@ -34,12 +34,22 @@ class Game {
 	}
 
 	/**
+	 * When going into Double Jeopardy, the lowest scoring player should have first pick
+	 */
+	activateLowestScorePicker () {
+		this.setOnAllPlayers(['active'], false);
+		const lowestScorer = _.minBy(this.players, 'score');
+		_.set(lowestScorer, 'active', true);
+	}
+
+	/**
 	 * Advances game to the next round
 	 */
 	advanceRound () {
 		switch (this.round) {
 		case JEOPARDY:
 			this.round = DOUBLE_JEOPARDY;
+			this.activateLowestScorePicker();
 			break;
 		case DOUBLE_JEOPARDY:
 			this.state = FINAL;
