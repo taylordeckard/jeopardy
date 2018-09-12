@@ -193,13 +193,13 @@ class Game {
 	onAllPlayersAttempted () {
 		this.currentQuestion.answered = true;
 		_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
-		if (this.areAllQuestionsAnswered()) {
-			this.advanceRound();
-		}
 		if (this.lastPicker) {
 			this.lastPicker.active = true;
 		}
 		this.setOnAllPlayers(['attempted'], false);
+		if (this.areAllQuestionsAnswered()) {
+			this.advanceRound();
+		}
 	}
 
 	/**
