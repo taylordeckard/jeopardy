@@ -31,9 +31,9 @@ module.exports = {
 				// to reduce false positives, only compare tokens greater than length 3
 				uToken.length > 3
 				// not included in the question
-				&& !_.includes(card.question, uToken)
+				&& !_.includes(_.toLower(card.question), uToken)
 				// or the category
-				&& !_.includes(card.category, uToken)
+				&& !_.includes(_.toLower(card.category), uToken)
 			) {
 				const similarities = _.map(realAnswerTokens, rToken =>
 					stringSimilarity.compareTwoStrings(rToken, uToken));

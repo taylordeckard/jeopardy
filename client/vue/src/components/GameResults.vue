@@ -22,7 +22,7 @@
 </template>
 <script>
 import { mapState } from 'vuex';
-import { cloneDeep, every, get, groupBy, find, some } from 'lodash-es';
+import { cloneDeep, every, get, groupBy, find, maxBy, some } from 'lodash-es';
 
 let computedTie;
 let computedNoWinners;
@@ -39,7 +39,8 @@ export default {
       if (!computedTie) {
         // tie if two player's score is the same
         const dupScoreGroups = groupBy(this.game.players, 'score');
-        computedTie = some(dupScoreGroups, sg => sg.length > 1);
+        const maxScore = maxBy(this.game.players, 'score');
+        computedTie = some(dupScoreGroups, sg => sg.length > 1 && get(sg, 'score') === maxScore);
       }
       return computedTie;
     },
