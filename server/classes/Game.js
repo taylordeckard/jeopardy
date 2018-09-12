@@ -4,9 +4,9 @@ const Answer = require('./Answer');
 const { server } = require('../server');
 const {
 	EVENTS: {
-		ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, FINAL_ANSWER_TIME_OUT,
-		FINAL_BID_TIME_OUT, FINAL_QUESTION, GAME_CHANGED, GAME_RESULTS, INCORRECT_ANSWER,
-		PICK_QUESTION, PRE_START, QUESTION, QUESTION_PICKED,
+		ANSWER, ANSWER_TIME_OUT, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL,
+		FINAL_ANSWER_TIME_OUT, FINAL_BID_TIME_OUT, FINAL_QUESTION, GAME_CHANGED, GAME_RESULTS,
+		INCORRECT_ANSWER, PICK_QUESTION, PRE_START, QUESTION, QUESTION_PICKED,
 	},
 	GAME_EXPORT_FIELDS,
 	ROUNDS: { DOUBLE_JEOPARDY, JEOPARDY, FINAL_JEOPARDY },
@@ -68,6 +68,7 @@ class Game {
 			const player = _.find(this.players, { username });
 			this.setOnAllPlayers(['active'], false);
 			_.set(player, 'active', true);
+			_.set(player, 'attempted', true);
 			this.state = ANSWER;
 			server.publish('/game', { event: BUZZ_IN, game: this.getGame() });
 			server.publish('/lobby', { event: GAME_CHANGED, game: this.getGame() });
@@ -134,7 +135,6 @@ class Game {
 		);
 		const player = _.find(this.players, { active: true });
 		const points = _.parseInt(_.replace(_.get(this, 'currentQuestion.value'), /^\$/, ''));
-		_.set(player, 'attempted', true);
 		if (isCorrect) {
 			this.currentQuestion.answered = true;
 			this.firstCorrectAnswer = true;
@@ -166,15 +166,7 @@ class Game {
 			let game;
 			_.set(this, 'allPlayersAttempted', _.every(this.players, 'attempted'));
 			if (this.allPlayersAttempted) {
-				this.currentQuestion.answered = true;
-				_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
-				if (this.areAllQuestionsAnswered()) {
-					this.advanceRound();
-				}
-				if (this.lastPicker) {
-					this.lastPicker.active = true;
-				}
-				this.setOnAllPlayers(['attempted'], false);
+				this.onAllPlayersAttempted();
 				game = this.getGame();
 				this.setAnswer(game, true, false, player.username, answer);
 			} else {
@@ -183,6 +175,21 @@ class Game {
 			}
 			server.publish('/game', { event: INCORRECT_ANSWER, game: game });
 		}
+	}
+
+	/**
+	 * Handles scenario when all players have attempted to answer a clue
+	 */
+	onAllPlayersAttempted () {
+		this.currentQuestion.answered = true;
+		_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
+		if (this.areAllQuestionsAnswered()) {
+			this.advanceRound();
+		}
+		if (this.lastPicker) {
+			this.lastPicker.active = true;
+		}
+		this.setOnAllPlayers(['attempted'], false);
 	}
 
 	/**
@@ -196,6 +203,18 @@ class Game {
 		], 'username');
 		// if all players did not buzz in within time limit, advance the state
 		if (this.timedOutPlayers.length === this.players.length) {
+			if (this.state === ANSWER) {
+				// if timed out while someone is answering, allow other players to answer
+				_.set(this, 'allPlayersAttempted', _.every(this.players, 'attempted'));
+				if (!this.allPlayersAttempted) {
+					this.state = QUESTION;
+					this.setOnAllPlayers(['active'], false);
+					server.publish('/game', { event: ANSWER_TIME_OUT, game: this.getGame() });
+					server.publish('/lobby', { event: GAME_CHANGED, game: this.getGame() });
+					return;
+				}
+				this.onAllPlayersAttempted();
+			}
 			_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
 			const activePlayer = _.find(this.players, { active: true });
 			if (activePlayer) {

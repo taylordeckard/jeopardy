@@ -1,5 +1,6 @@
 // EVENTS
 export const ANSWER = 'ANSWER';
+export const ANSWER_TIME_OUT = 'ANSWER_TIME_OUT';
 export const FINAL = 'FINAL';
 export const FINAL_ANSWER = 'FINAL_ANSWER';
 export const FINAL_ANSWER_TIME_OUT = 'FINAL_ANSWER_TIME_OUT';

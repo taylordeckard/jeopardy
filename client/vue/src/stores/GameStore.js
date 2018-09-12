@@ -3,9 +3,9 @@ import { each, find, get, set } from 'lodash-es';
 import api from '../api';
 import socket from '../socket';
 import {
-  ANSWER, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, FINAL_ANSWER, FINAL_ANSWER_TIME_OUT,
-  FINAL_BID, FINAL_BID_TIME_OUT, FINAL_QUESTION, INCORRECT_ANSWER, PICK_QUESTION,
-  PLAYER_JOINED, PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
+  ANSWER, ANSWER_TIME_OUT, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, FINAL_ANSWER,
+  FINAL_ANSWER_TIME_OUT, FINAL_BID, FINAL_BID_TIME_OUT, FINAL_QUESTION, INCORRECT_ANSWER,
+  PICK_QUESTION, PLAYER_JOINED, PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
 } from '../events';
 import { AudioPreloader, ImagePreloader, TimeCtrl, VideoPreloader } from '../utilities';
 
@@ -172,8 +172,11 @@ export default {
             TimeCtrl[FINAL_ANSWER](context, msg.game);
             break;
           }
-          case FINAL_QUESTION:
+          case ANSWER_TIME_OUT: {
+            TimeCtrl[QUESTION_PICKED](context, msg.game);
             break;
+          }
+          case FINAL_QUESTION:
           case PLAYER_JOINED:
           case PLAYER_LEFT:
           default:
