@@ -40,6 +40,7 @@ class Game {
 		this.setOnAllPlayers(['active'], false);
 		const lowestScorer = _.minBy(this.players, 'score');
 		_.set(lowestScorer, 'active', true);
+		this.lastPicker = lowestScorer;
 	}
 
 	/**

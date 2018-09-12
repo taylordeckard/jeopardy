@@ -5,7 +5,7 @@ import {
 } from '../events';
 
 const SECOND = 1000;
-const BID_TIME_LIMIT = 10;
+const BID_TIME_LIMIT = 20;
 const BUZZ_IN_TIME_LIMIT = 10;
 const ANSWER_TIME_LIMIT = 10;
 const SHOW_ANSWER_TIME_LIMIT = 3;

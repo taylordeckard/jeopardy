@@ -31,6 +31,18 @@ module.exports = {
 		'allPlayersAttempted', 'currentQuestion', 'host', 'id', 'name', 'players', 'round',
 		'showNumber', 'started', 'state',
 	],
+	NUMBER_MAP: {
+		1: 'one',
+		2: 'two',
+		3: 'three',
+		4: 'four',
+		5: 'five',
+		6: 'six',
+		7: 'seven',
+		8: 'eight',
+		9: 'nine',
+		10: 'ten',
+	},
 	REGEX: {
 		ARTICLES: /(^a |^the |^of | a | the | of |[/])/g,
 		BAD_CHARS: /["'.-]/g,
