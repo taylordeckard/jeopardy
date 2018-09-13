@@ -2,7 +2,7 @@
 FROM node:8.11.1 as ubuntu
 
 WORKDIR /src
-ADD /package.json /src/package.json
+ADD ./package.json /src/package.json
 
 RUN npm install --only=production
 
