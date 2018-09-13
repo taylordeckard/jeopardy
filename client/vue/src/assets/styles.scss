@@ -63,7 +63,7 @@
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-}      
+}
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity 1s;
@@ -124,7 +124,7 @@
 
 /**
  * Margins
- */ 
+ */
 $sides: ('top', 'left', 'right', 'bottom');
 .dbl-margin {
   margin: $base-spacing;

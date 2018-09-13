@@ -43,7 +43,9 @@
     <div class="players-bar">
       <Players v-bind:players="game && game.players"></Players>
     </div>
+    <ChatBox></ChatBox>
   </div>
+
 </template>
 <script>
 import { mapActions, mapState } from 'vuex';
@@ -60,12 +62,14 @@ import Round from './Round.vue';
 import AudioClue from './AudioClue.vue';
 import ImageClue from './ImageClue.vue';
 import VideoClue from './VideoClue.vue';
+import ChatBox from './ChatBox.vue';
 
 export default {
   name: 'Game',
   components: {
     Answer,
     AudioClue,
+    ChatBox,
     FinalBid,
     FinalQuestion,
     GameResults,
