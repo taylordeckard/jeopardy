@@ -7,3 +7,4 @@ client/media
 client/media/*
 postgres/scraper/__pycache__
 postgres/scraper/JEOPARDY.*
+postgres/data_persist
