@@ -39,8 +39,8 @@ export default {
       if (!computedTie) {
         // tie if two player's score is the same
         const dupScoreGroups = groupBy(this.game.players, 'score');
-        const maxScore = maxBy(this.game.players, 'score');
-        computedTie = some(dupScoreGroups, sg => sg.length > 1 && get(sg, 'score') === maxScore);
+        const maxScore = get(maxBy(this.game.players, 'score'), 'score');
+        computedTie = some(dupScoreGroups, sg => sg.length > 1 && get(sg, '[0].score') === maxScore);
       }
       return computedTie;
     },

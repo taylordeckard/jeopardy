@@ -99,6 +99,9 @@
     top: 1px;
     color: darken($yellow, 15%);
   }
+  &--small {
+    font-size: 18px;
+  }
 }
 
 .flex {

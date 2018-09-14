@@ -13,6 +13,7 @@ const loadRoutes = async () => {
 	// extensions
 	require('./extensions/renewUserRegistration');
 	// routes
+	require('./routes/leaderboardRoute');
 	require('./routes/lobbyRoute');
 	require('./routes/gamesRoute');
 	require('./routes/questionsRoute');

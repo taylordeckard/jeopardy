@@ -2,6 +2,7 @@ const _ = require('lodash');
 const uuidv4 = require('uuid/v4');
 const Answer = require('./Answer');
 const { server } = require('../server');
+const leaderbard = require('../methods/leaderboard');
 const {
 	EVENTS: {
 		ANSWER, ANSWER_TIME_OUT, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL,
@@ -104,8 +105,18 @@ class Game {
 				player.score -= _.parseInt(player.finalBid || 0);
 			}
 		});
+		// check for tie
+		const dupScoreGroups = _.groupBy(this.players, 'score');
 		const winner = _.maxBy(this.players, 'score');
-		winner.isWinner = true;
+		const computedTie = _.some(
+			dupScoreGroups,
+			sg => sg.length > 1 && _.get(sg, '[0].score') === winner.score,
+		);
+		if (!computedTie && winner.score > 0) {
+			// update the leaderboard
+			leaderbard.reportWinner(winner);
+			winner.isWinner = true;
+		}
 	}
 
 	/**

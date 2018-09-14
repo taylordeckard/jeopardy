@@ -15,6 +15,8 @@
       <a v-if="showLink" class="link" v-on:click="start">START</a>
     </transition>
     <br>
+    <router-link class="link link--small" to="/leaderboard">VIEW LEADERBOARD</router-link>
+    <br>
   </div>
 </template>
 <script>

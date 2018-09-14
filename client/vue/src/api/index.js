@@ -1,6 +1,7 @@
 import {
   GameResource,
   GamePlayerResource,
+  LeaderboardResource,
   LobbyGamesResource,
   QuestionsResource,
   QuestionsYearsResource,
@@ -11,14 +12,8 @@ export default {
   addPlayer(gameId, player, socketId) {
     return GamePlayerResource.save({ gameId }, { player, socketId });
   },
-  registerUsername(username) {
-    return RegisterUsernameResource.save({ username });
-  },
   createGame(socketId, username, year) {
     return LobbyGamesResource.save({ socketId, username, year });
-  },
-  getQuestions(showNumber) {
-    return QuestionsResource.get({ showNumber });
   },
   getGame(gameId) {
     return GameResource.get({ gameId });
@@ -26,7 +21,16 @@ export default {
   getGames() {
     return LobbyGamesResource.get();
   },
+  getLeaderboard(params) {
+    return LeaderboardResource.get(params);
+  },
+  getQuestions(showNumber) {
+    return QuestionsResource.get({ showNumber });
+  },
   getYears() {
     return QuestionsYearsResource.get();
+  },
+  registerUsername(username) {
+    return RegisterUsernameResource.save({ username });
   },
 };

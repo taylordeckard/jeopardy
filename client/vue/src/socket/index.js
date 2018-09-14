@@ -1,5 +1,5 @@
 import nes from 'nes/client';
-import { SOCKET_URL } from '../config';
+import { SOCKET_URL } from '../configs/config';
 
 class Socket {
   constructor() {
