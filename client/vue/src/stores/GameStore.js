@@ -184,21 +184,25 @@ export default {
           case FINAL_QUESTION:
           case PLAYER_JOINED:
           case PLAYER_LEFT:
-          case CHAT_MESSAGE: {
-            if (msg.message) {
-              const messages = context.state.messages.concat(msg.message);
-              context.commit('messages', messages);
-            }
-            break;
-          }
           default:
         }
         context.commit('game', msg.game);
       });
     },
+    async subscribeChat(context) {
+      await socket.client.subscribe(`/chat/${context.state.game.id}`, async (msg) => {
+        if (msg.event === CHAT_MESSAGE) {
+          if (msg.message) {
+            const messages = context.state.messages.concat(msg.message);
+            context.commit('messages', messages);
+          }
+        }
+      });
+    },
     async unsubscribe() {
       TimeCtrl.killTimers();
       await socket.client.unsubscribe('/game', null);
+      await socket.client.unsubscribe(`/chat/${this.state.game.id}`, null);
     },
     async [ANSWER](context, answer) {
       const event = ANSWER;

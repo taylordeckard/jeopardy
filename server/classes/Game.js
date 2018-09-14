@@ -1,17 +1,17 @@
 const _ = require('lodash');
 const uuidv4 = require('uuid/v4');
 const Answer = require('./Answer');
+const ChatRoom = require('./ChatRoom');
 const { server } = require('../server');
 const leaderbard = require('../methods/leaderboard');
 const {
 	EVENTS: {
 		ANSWER, ANSWER_TIME_OUT, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL,
 		FINAL_ANSWER_TIME_OUT, FINAL_BID_TIME_OUT, FINAL_QUESTION, GAME_CHANGED, GAME_RESULTS,
-		INCORRECT_ANSWER, PICK_QUESTION, PRE_START, QUESTION, QUESTION_PICKED, CHAT_MESSAGE
+		INCORRECT_ANSWER, PICK_QUESTION, PRE_START, QUESTION, QUESTION_PICKED,
 	},
 	GAME_EXPORT_FIELDS,
 	ROUNDS: { DOUBLE_JEOPARDY, JEOPARDY, FINAL_JEOPARDY },
-	CHAT_CONSTANTS,
 } = require('../constants');
 const logger = require('../logger');
 
@@ -33,6 +33,7 @@ class Game {
 		this.round = JEOPARDY;
 		this.showNumber = options.showNumber;
 		this.state = PRE_START;
+		this.chatRoom = new ChatRoom({id: this.id});
 	}
 
 	/**
@@ -340,20 +341,6 @@ class Game {
 			server.publish(`/game/${this.id}`, { event: FINAL_BID_TIME_OUT, game });
 			this.timedOutPlayers = [];
 		}
-	}
-
-	/**
-	 * Sends incoming chat message out to all players in the game
-	 * @param {string} username
-	 * @param {string} message
-	 */
-	onChatMessage (username, message) {
-		const game = this.getGame();
-		if(message && message.length > CHAT_CONSTANTS.MAX_LENGTH) {
-			logger.warn('Received a message over maximum length. Dropping it.');
-			return;
-		}
-		server.publish('/game', { event: CHAT_MESSAGE, message: {text: message, username}, game});
 	}
 
 	/**

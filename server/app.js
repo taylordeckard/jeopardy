@@ -18,6 +18,7 @@ const loadRoutes = async () => {
 	require('./routes/gamesRoute');
 	require('./routes/questionsRoute');
 	require('./routes/userRoute');
+	require('./routes/chatRoute');
 	/* eslint-enable global-require */
 	return Promise.resolve();
 };
