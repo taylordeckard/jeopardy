@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const db = require('../db');
 const logger = require('../logger');
+const Winner = require('../classes/Winner');
 
 const sortValueWhitelist = ['num_games_won', 'username', 'winnings'];
 const sortDirWhitelist = ['ASC', 'DESC'];
@@ -12,21 +13,6 @@ const upsertQuery = 'INSERT INTO winners(num_games_won, username, winnings) VALU
 const getQuery = (sortValue, sortDir) =>
 	`SELECT * FROM winners ORDER BY ${sortValue} ${sortDir} LIMIT $1 OFFSET $2`;
 const getCountQuery = 'SELECT COUNT(*) from winners';
-
-/**
- * A Winner
- */
-class Winner {
-	/**
-	 * Constructs a Winner class
-	 * @param {any} winner
-	 */
-	constructor (winner) {
-		this.numGamesWon = _.get(winner, 'num_games_won');
-		this.username = _.toUpper(_.get(winner, 'username'));
-		this.winnings = `$${_.get(winner, 'winnings')}`;
-	}
-}
 
 module.exports = {
 	/**

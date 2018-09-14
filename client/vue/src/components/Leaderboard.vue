@@ -10,6 +10,8 @@
       </Pager>
     </div>
     <Loader v-else></Loader>
+    <div class="absolute-center"
+      v-if="tableCfg && tableCfg.rows && !tableCfg.rows.length">LEADERBOARD IS EMPTY</div>
   </div>
 </template>
 <script>
