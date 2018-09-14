@@ -72,7 +72,7 @@ export default {
       context.commit('wsClientId', socket.client.id);
     },
     async subscribe(context) {
-      await socket.client.subscribe('/game', async (msg/* , flags */) => {
+      await socket.client.subscribe(`/game/${context.state.game.id}`, async (msg/* , flags */) => {
         switch (msg.event) {
           case CORRECT_ANSWER: {
             let startNextRound = false;
