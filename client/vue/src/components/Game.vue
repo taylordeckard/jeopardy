@@ -88,8 +88,8 @@ export default {
       return;
     }
     await this.getSocket();
-    await this.subscribe();
     await this.getGame(this.$route.params.id);
+    await this.subscribe();
     await this.getQuestions(this.game.showNumber);
     this.isLoading = false;
     if (!find(this.game.players, { username: this.username })) {

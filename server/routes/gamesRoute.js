@@ -34,16 +34,12 @@ server.route({
 	},
 });
 
-server.subscription('/game', {
-	// filter: (path, msg/* , opts */) => {
-	// 	logger.info(msg);
-	// 	return true;
-	// },
-	onSubscribe: (/* socket, path, params */) => {
-		logger.debug('subscribed to /game');
+server.subscription(`/game/{id}`, {
+	onSubscribe: ( socket, path, params ) => {
+		logger.debug(`subscribed to /game/${params.id}`);
 	},
-	onUnsubscribe: (socket/* , path, params */) => {
-		logger.debug('unsubscribed from /game');
+	onUnsubscribe: (socket, path, params ) => {
+		logger.debug(`unsubscribed from /game/${params.id}`);
 		Lobby.removePlayerBySocket(socket.id);
 	},
 });

@@ -61,7 +61,7 @@ class LobbyState {
 		const game = _.find(this.games, { id });
 		game.players.push(player);
 		server.publish('/lobby', { event: PLAYER_JOINED, game });
-		server.publish('/game', { event: PLAYER_JOINED, game });
+		server.publish(`/game/${id}`, { event: PLAYER_JOINED, game });
 		return player;
 	}
 
@@ -145,7 +145,7 @@ class LobbyState {
 		}
 		if (game.players.length) {
 			server.publish('/lobby', { event: PLAYER_LEFT, game });
-			server.publish('/game', { event: PLAYER_LEFT, game });
+			server.publish(`/game/${id}`, { event: PLAYER_LEFT, game });
 		} else {
 			server.publish('/lobby', { event: GAME_CLOSED, games: this.getGames() });
 		}

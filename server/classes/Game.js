@@ -82,7 +82,7 @@ class Game {
 			_.set(player, 'active', true);
 			_.set(player, 'attempted', true);
 			this.state = ANSWER;
-			server.publish('/game', { event: BUZZ_IN, game: this.getGame() });
+			server.publish(`/game/${this.id}`, { event: BUZZ_IN, game: this.getGame() });
 			server.publish('/lobby', { event: GAME_CHANGED, game: this.getGame() });
 		} else if (!_.includes(this.buzzQueue, username)) {
 			this.buzzQueue.push(username);
@@ -131,7 +131,7 @@ class Game {
 		this.started = true;
 		this.currentQuestion = _.find(this.grid.questions[this.round], { id });
 		this.setOnAllPlayers(['active'], false);
-		server.publish('/game', { event: QUESTION_PICKED, game: this.getGame() });
+		server.publish(`/game/${this.id}`, { event: QUESTION_PICKED, game: this.getGame() });
 		server.publish('/lobby', { event: GAME_CHANGED, game: this.getGame() });
 	}
 
@@ -169,7 +169,7 @@ class Game {
 			}
 			const game = this.getGame();
 			this.setAnswer(game, true, true, player.username);
-			server.publish('/game', { event: CORRECT_ANSWER, game });
+			server.publish(`/game/${this.id}`, { event: CORRECT_ANSWER, game });
 			server.publish('/lobby', { event: GAME_CHANGED, game });
 			this.currentQuestion = null;
 		} else {
@@ -195,7 +195,7 @@ class Game {
 				game = this.getGame();
 				this.setAnswer(game, false, false, player.username, answer);
 			}
-			server.publish('/game', { event: INCORRECT_ANSWER, game: game });
+			server.publish(`/game/${this.id}`, { event: INCORRECT_ANSWER, game: game });
 		}
 	}
 
@@ -231,7 +231,7 @@ class Game {
 				if (!this.allPlayersAttempted) {
 					this.state = QUESTION;
 					this.setOnAllPlayers(['active'], false);
-					server.publish('/game', { event: ANSWER_TIME_OUT, game: this.getGame() });
+					server.publish(`/game/${this.id}`, { event: ANSWER_TIME_OUT, game: this.getGame() });
 					server.publish('/lobby', { event: GAME_CHANGED, game: this.getGame() });
 					return;
 				}
@@ -254,7 +254,7 @@ class Game {
 			}
 			const game = this.getGame();
 			this.setAnswer(game, true, false);
-			server.publish('/game', { event: BUZZ_TIMEOUT, game });
+			server.publish(`/game/${this.id}`, { event: BUZZ_TIMEOUT, game });
 			this.timedOutPlayers = [];
 		}
 	}
@@ -308,7 +308,7 @@ class Game {
 			this.calculateFinalScore();
 			const game = this.getGame();
 			game.currentQuestion = this.grid.questions[FINAL_JEOPARDY];
-			server.publish('/game', { event: FINAL_ANSWER_TIME_OUT, game });
+			server.publish(`/game/${this.id}`, { event: FINAL_ANSWER_TIME_OUT, game });
 			this.timedOutPlayers = [];
 		}
 	}
@@ -336,7 +336,7 @@ class Game {
 		if (this.timedOutPlayers.length === this.players.length) {
 			_.set(this, 'state', FINAL_QUESTION);
 			const game = this.getGame();
-			server.publish('/game', { event: FINAL_BID_TIME_OUT, game });
+			server.publish(`/game/${this.id}`, { event: FINAL_BID_TIME_OUT, game });
 			this.timedOutPlayers = [];
 		}
 	}
