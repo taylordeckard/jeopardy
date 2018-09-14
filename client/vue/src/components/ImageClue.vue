@@ -43,11 +43,11 @@ export default {
 @import '../assets/variables.scss';
 .image-clue {
   @include absolute-center;
-  &.scaleHeight {
+  & img.scaleHeight {
     height: 40vh;
   }
-  &.scaleWidth {
-    width: 40vh;
+  & img.scaleWidth {
+    width: 40vw;
   }
 }
 </style>
