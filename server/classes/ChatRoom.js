@@ -5,6 +5,7 @@ const {
 	CHAT_CONSTANTS,
 } = require('../constants');
 const { server } = require('../server');
+const uuidv4 = require('uuid/v4');
 
 class ChatRoom {
   constructor(options) {
@@ -21,7 +22,7 @@ class ChatRoom {
 			logger.warn('Received a message over maximum length. Dropping it.');
 			return;
 		}
-		server.publish(`/chat/${id}`, { event: CHAT_MESSAGE, message: {text: message, username}, id});
+		server.publish(`/chat/${id}`, { event: CHAT_MESSAGE, message: {text: message, username, id: uuidv4()}, id});
 	}
 }
 

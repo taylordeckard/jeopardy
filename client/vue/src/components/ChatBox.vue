@@ -5,18 +5,18 @@
     </header>
     <div class="chat" v-show="expanded" @submit.prevent>
       <div class="chat-text-area" ref="textArea">
-        <div v-if="messages.length" v-for="message in messages">
+        <div v-if="messages.length" v-for="message in messages" v-bind:key="message.id">
           <span>{{message && message.username}}: {{message && message.text}}</span>
         </div>
       </div>
       <form>
-        <input @keyup.enter="onSubmit" type="text" placeholder="Type your message..." v-model="currentMessage" autofocus maxlength="2000"></input>
+        <input @keyup.stop="onSubmit" type="text" placeholder="Type your message..."
+        v-model="currentMessage" autofocus maxlength="2000" />
       </form>
     </div>
   </div>
 </template>
 <script>
-import { get, find, debounce } from 'lodash-es';
 import { mapActions, mapState } from 'vuex';
 import { CHAT_MESSAGE } from '../events';
 
@@ -49,21 +49,21 @@ export default {
     },
     expand() {
       this.expanded = !this.expanded;
-      if(this.expanded) {
+      if (this.expanded) {
         this.unread = 0;
       }
     },
   },
   watch: {
-    messages: function(val, oldVal){
+    messages(val, oldVal) {
       if (val.length > oldVal.length && !this.expanded) {
-        this.unread++;
+        this.unread = this.unread + 1;
       }
-    }
+    },
   },
-  updated: function() {
+  updated() {
     this.$refs.textArea.scrollTop = this.$refs.textArea.scrollHeight;
-  }
+  },
 };
 </script>
 <style scoped lang="scss">
@@ -110,10 +110,10 @@ export default {
 
 .chat input[type="text"] {
   border: 1px solid #ccc;
-	border-radius: 3px;
-	padding: 8px;
-	outline: none;
-	width: 260px;
+  border-radius: 3px;
+  padding: 8px;
+  outline: none;
+  width: 260px;
   position: absolute;
   bottom: 8px;
   left: 8px;
