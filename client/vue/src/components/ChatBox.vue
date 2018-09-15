@@ -5,7 +5,7 @@
     </header>
     <div class="chat" v-show="expanded" @submit.prevent>
       <div class="chat-text-area" ref="textArea">
-        <div v-if="messages.length" v-for="message in messages" v-bind:key="message.id">
+        <div v-show="messages.length" v-for="message in messages" v-bind:key="message.id">
           <span v-bind:class="{ 'text-yellow': username === message.username,
           'text-blue':  username !== message.username}">
             {{message && message.username}}: </span>
@@ -44,7 +44,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('game', [CHAT_MESSAGE]),
+    ...mapActions('game', [CHAT_MESSAGE, 'getGame', 'subscribeChat', 'unsubscribeChat']),
     onSubmit(event) {
       if (event.code === 'Enter') {
         this[CHAT_MESSAGE](this.currentMessage);
@@ -67,6 +67,14 @@ export default {
   },
   updated() {
     this.$refs.textArea.scrollTop = this.$refs.textArea.scrollHeight;
+  },
+  async created() {
+    await this.getGame(this.$route.params.id);
+    await this.subscribeChat();
+    this[CHAT_MESSAGE](':hello');
+  },
+  async destroyed() {
+    this.unsubscribeChat();
   },
 };
 </script>

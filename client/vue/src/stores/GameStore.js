@@ -202,7 +202,10 @@ export default {
     async unsubscribe() {
       TimeCtrl.killTimers();
       await socket.client.unsubscribe('/game', null);
-      await socket.client.unsubscribe(`/chat/${this.state.game.id}`, null);
+    },
+    async unsubscribeChat(context) {
+      context.commit('messages', []);
+      await socket.client.unsubscribe(`/chat/${context.state.game.id}`, null);
     },
     async [ANSWER](context, answer) {
       const event = ANSWER;

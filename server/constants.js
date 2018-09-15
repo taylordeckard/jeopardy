@@ -57,5 +57,6 @@ module.exports = {
 	SIMILARITY_THRESHOLD: 0.75,
 	CHAT_CONSTANTS: {
 		MAX_LENGTH: 2000,
+		EMOJIS: [':trebek_surprised', ':trebek_smirk', ':trebek_comeon'],
 	},
 };

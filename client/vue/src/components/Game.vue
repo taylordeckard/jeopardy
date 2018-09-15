@@ -94,7 +94,6 @@ export default {
     await this.getSocket();
     await this.getGame(this.$route.params.id);
     await this.subscribe();
-    await this.subscribeChat();
     await this.getQuestions(this.game.showNumber);
     this.isLoading = false;
     if (!find(this.game.players, { username: this.username })) {
@@ -116,7 +115,6 @@ export default {
     ...mapActions('game', ['getSocket']),
     ...mapActions('game', ['subscribe']),
     ...mapActions('game', ['unsubscribe']),
-    ...mapActions('game', ['subscribeChat']),
   },
 };
 </script>
