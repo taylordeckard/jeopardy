@@ -1,17 +1,20 @@
 <template>
   <div class="chat-box">
     <header v-on:click="expand()">
-      <h2 v-bind:class="{ 'yellow': hasUnread }">Game Chat ({{unread}})</h2>
+      <h2 v-bind:class="{ 'text-yellow': hasUnread }">Game Chat ({{unread}})</h2>
     </header>
     <div class="chat" v-show="expanded" @submit.prevent>
       <div class="chat-text-area" ref="textArea">
         <div v-if="messages.length" v-for="message in messages" v-bind:key="message.id">
-          <span>{{message && message.username}}: {{message && message.text}}</span>
+          <span v-bind:class="{ 'text-yellow': username === message.username,
+          'text-blue':  username !== message.username}">
+            {{message && message.username}}: </span>
+          <span v-html="$options.filters.emojify(message.text)"></span>
         </div>
       </div>
       <form>
         <input @keyup.stop="onSubmit" type="text" placeholder="Type your message..."
-        v-model="currentMessage" autofocus maxlength="2000" />
+        v-model="currentMessage" autofocus maxlength="2000"/>
       </form>
     </div>
   </div>
@@ -32,6 +35,7 @@ export default {
   },
   computed: {
     ...mapState('game', { messages: state => state.messages }),
+    ...mapState('game', { username: state => state.username }),
     oldMessageCount() {
       return this.messages.length;
     },
@@ -117,10 +121,6 @@ export default {
   position: absolute;
   bottom: 8px;
   left: 8px;
-}
-
-.yellow {
-  color: #E5C14E;
 }
 
 </style>

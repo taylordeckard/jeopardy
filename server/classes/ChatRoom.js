@@ -6,6 +6,7 @@ const {
 } = require('../constants');
 const { server } = require('../server');
 const uuidv4 = require('uuid/v4');
+const striptags = require('striptags');
 
 class ChatRoom {
   constructor(options) {
@@ -22,7 +23,8 @@ class ChatRoom {
 			logger.warn('Received a message over maximum length. Dropping it.');
 			return;
 		}
-		server.publish(`/chat/${id}`, { event: CHAT_MESSAGE, message: {text: message, username, id: uuidv4()}, id});
+		// Messages get displayed as HTML so we need to strip any user-entered tags out for safety reasons.
+		server.publish(`/chat/${id}`, { event: CHAT_MESSAGE, message: {text: striptags(message), username, id: uuidv4()}, id});
 	}
 }
 
