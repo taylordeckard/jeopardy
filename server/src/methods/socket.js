@@ -54,7 +54,12 @@ module.exports = {
 			break;
 		}
 		case CHAT_MESSAGE: {
-			_.invoke(game.chatRoom, 'onChatMessage', game.id, msg.username, msg.message, socket);
+			if (game) {
+				_.invoke(
+					game.chatRoom, 'onChatMessage', game.id, msg.username,
+					msg.message, socket,
+				);
+			}
 			break;
 		}
 		default:

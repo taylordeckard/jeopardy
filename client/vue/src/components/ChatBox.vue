@@ -1,10 +1,10 @@
 <template>
-  <div class="chat-box">
+  <div class="chat-box" v-bind:class="{ 'moveUp': shouldMoveUp }">
     <header v-on:click="expand()">
       <h2 v-bind:class="{ 'text-yellow': hasUnread }">Game Chat ({{unread}})</h2>
     </header>
-    <div class="chat" v-show="expanded" @submit.prevent>
-      <div class="chat-text-area" ref="textArea">
+    <div class="chat" v-bind:class="{ expanded }" @submit.prevent>
+      <div v-show="expanded" class="chat-text-area" ref="textArea">
         <div v-show="messages.length" v-for="message in messages" v-bind:key="message.id">
           <span v-bind:class="{ 'text-yellow': username === message.username,
           'text-blue':  username !== message.username}">
@@ -12,7 +12,7 @@
           <span v-html="$options.filters.emojify(message.text)"></span>
         </div>
       </div>
-      <form>
+      <form v-show="expanded">
         <input @keyup.stop="onSubmit" type="text" placeholder="Type your message..."
         v-model="currentMessage" autofocus maxlength="2000"/>
       </form>
@@ -21,7 +21,10 @@
 </template>
 <script>
 import { mapActions, mapState } from 'vuex';
-import { CHAT_MESSAGE } from '../events';
+import { includes } from 'lodash-es';
+import { ANSWER, CHAT_MESSAGE, FINAL, FINAL_QUESTION, QUESTION } from '../events';
+
+const moveUpStates = [ANSWER, FINAL, FINAL_QUESTION, QUESTION];
 
 export default {
   name: 'ChatBox',
@@ -36,11 +39,15 @@ export default {
   computed: {
     ...mapState('game', { messages: state => state.messages }),
     ...mapState('game', { username: state => state.username }),
+    ...mapState('game', { game: state => state.game }),
     oldMessageCount() {
       return this.messages.length;
     },
     hasUnread() {
       return this.unread > 0;
+    },
+    shouldMoveUp() {
+      return this.game && includes(moveUpStates, this.game.state);
     },
   },
   methods: {
@@ -88,7 +95,11 @@ export default {
   z-index: 150;
   width: 300px;
   font-size: 12px;
-  box-shadow: 5px 5px 5px black;
+  box-shadow: 5px 0px 0px rgba(0,0,0,.5);
+  transition: bottom .2s;
+  &.moveUp {
+    bottom: 12px;
+  }
 }
 
 .chat-box header {
@@ -105,8 +116,12 @@ export default {
 
 .chat {
   position: relative;
-  height: 300px;
+  height: 0px;
   background: #ffffff;
+  transition: height .2s;
+  &.expanded {
+    height: 300px;
+  }
 }
 
 .chat-text-area {

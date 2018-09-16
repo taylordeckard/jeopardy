@@ -10,11 +10,9 @@
         </TextInput>
       </div>
     </div>
-    <transition name="slide-out">
-      <Timer v-if="game.timerOn"
-        v-bind:seconds="game.timer"
-        v-bind:timer-limit="game.timerLimit"></Timer>
-    </transition>
+    <Timer v-if="game.timerOn"
+      v-bind:seconds="game.timer"
+      v-bind:timer-limit="game.timerLimit"></Timer>
   </div>
 </template>
 
