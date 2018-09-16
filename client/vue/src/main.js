@@ -3,6 +3,7 @@ import App from './App.vue';
 import './assets/styles.scss';
 import router from './router';
 import store from './stores';
+import './filters/emojify';
 
 Vue.config.productionTip = false;
 

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const uuidv4 = require('uuid/v4');
 const Answer = require('./Answer');
+const ChatRoom = require('./ChatRoom');
 const { server } = require('../server');
 const leaderbard = require('../methods/leaderboard');
 const {
@@ -32,6 +33,7 @@ class Game {
 		this.round = JEOPARDY;
 		this.showNumber = options.showNumber;
 		this.state = PRE_START;
+		this.chatRoom = new ChatRoom({id: this.id});
 	}
 
 	/**

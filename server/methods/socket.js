@@ -10,6 +10,7 @@ const {
 		FINAL_BID_TIME_OUT,
 		PICK_QUESTION,
 		QUESTION_BUZZ_TIME_OUT,
+		CHAT_MESSAGE,
 	},
 } = require('../constants');
 const Lobby = require('../classes/Lobby');
@@ -50,6 +51,10 @@ module.exports = {
 		}
 		case QUESTION_BUZZ_TIME_OUT: {
 			_.invoke(game, 'onBuzzTimeout', msg.username);
+			break;
+		}
+		case CHAT_MESSAGE: {
+			_.invoke(game.chatRoom, 'onChatMessage', game.id, msg.username, msg.message, socket);
 			break;
 		}
 		default:

@@ -6,6 +6,7 @@ import {
   ANSWER, ANSWER_TIME_OUT, BUZZ_IN, BUZZ_TIMEOUT, CORRECT_ANSWER, FINAL, FINAL_ANSWER,
   FINAL_ANSWER_TIME_OUT, FINAL_BID, FINAL_BID_TIME_OUT, FINAL_QUESTION, INCORRECT_ANSWER,
   PICK_QUESTION, PLAYER_JOINED, PLAYER_LEFT, QUESTION_BUZZ_TIME_OUT, QUESTION_PICKED,
+  CHAT_MESSAGE,
 } from '../events';
 import { AudioPreloader, ImagePreloader, TimeCtrl, VideoPreloader } from '../utilities';
 
@@ -18,6 +19,7 @@ export default {
     show: null,
     wsClientId: null,
     username: '',
+    messages: [],
   },
   mutations: {
     categories(state, categories) {
@@ -37,6 +39,9 @@ export default {
     },
     username(state, username) {
       Vue.set(state, 'username', username);
+    },
+    messages(state, messages) {
+      Vue.set(state, 'messages', messages);
     },
   },
   actions: {
@@ -184,9 +189,23 @@ export default {
         context.commit('game', msg.game);
       });
     },
+    async subscribeChat(context) {
+      await socket.client.subscribe(`/chat/${context.state.game.id}`, async (msg) => {
+        if (msg.event === CHAT_MESSAGE) {
+          if (msg.message) {
+            const messages = context.state.messages.concat(msg.message);
+            context.commit('messages', messages);
+          }
+        }
+      });
+    },
     async unsubscribe() {
       TimeCtrl.killTimers();
       await socket.client.unsubscribe('/game', null);
+    },
+    async unsubscribeChat(context) {
+      context.commit('messages', []);
+      await socket.client.unsubscribe(`/chat/${context.state.game.id}`, null);
     },
     async [ANSWER](context, answer) {
       const event = ANSWER;
@@ -240,6 +259,14 @@ export default {
       const gameId = context.state.game.id;
       const { username } = context.state;
       await socket.client.message({ event, gameId, username });
+    },
+    async [CHAT_MESSAGE](context, message) {
+      const event = CHAT_MESSAGE;
+      const gameId = context.state.game.id;
+      const { username } = context.state;
+      await socket.client.message({
+        event, gameId, message, username,
+      });
     },
   },
   getters: {},
