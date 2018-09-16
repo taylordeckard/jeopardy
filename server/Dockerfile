@@ -1,19 +1,19 @@
 # Install dependencies
 FROM node:8.11.1 as ubuntu
 
-WORKDIR /src
-ADD ./package.json /src/package.json
+WORKDIR /server
+ADD ./package.json /server/package.json
 
 RUN npm install --only=production
 
-ADD . /src
+ADD ./src /server/src
 
 # Copy built service into production image
 FROM node:8.11.1-alpine as alpine
 RUN npm install -g nodemon
-COPY --from=ubuntu /src /src 
+COPY --from=ubuntu /server /server
 
-WORKDIR /src
+WORKDIR /server
 
 EXPOSE 3000
-CMD [ "node", "app.js" ]
+CMD [ "node", "src/app.js" ]
