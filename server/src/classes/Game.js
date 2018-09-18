@@ -227,6 +227,12 @@ class Game {
 		], 'username');
 		// if all players did not buzz in within time limit, advance the state
 		if (this.timedOutPlayers.length === this.players.length) {
+			const activePlayer = _.find(this.players, { active: true });
+			if (activePlayer) {
+				const pointString = _.replace(_.get(this, 'currentQuestion.value'), /^\$/, '');
+				const points = _.parseInt(pointString);
+				activePlayer.score -= points;
+			}
 			if (this.state === ANSWER) {
 				// if timed out while someone is answering, allow other players to answer
 				_.set(this, 'allPlayersAttempted', _.every(this.players, 'attempted'));
@@ -240,12 +246,6 @@ class Game {
 				this.onAllPlayersAttempted();
 			}
 			_.set(this, 'state', this.firstCorrectAnswer ? PICK_QUESTION : PRE_START);
-			const activePlayer = _.find(this.players, { active: true });
-			if (activePlayer) {
-				const pointString = _.replace(_.get(this, 'currentQuestion.value'), /^\$/, '');
-				const points = _.parseInt(pointString);
-				activePlayer.score -= points;
-			}
 			this.setOnAllPlayers(['active', 'attempted'], false);
 			if (this.lastPicker) {
 				this.lastPicker.active = true;
