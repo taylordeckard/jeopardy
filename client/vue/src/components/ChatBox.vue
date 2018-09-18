@@ -47,7 +47,7 @@ export default {
       return this.unread > 0;
     },
     shouldMoveUp() {
-      return this.game && includes(moveUpStates, this.game.state);
+      return this.game && (includes(moveUpStates, this.game.state) && !this.game.showAnswer);
     },
   },
   methods: {

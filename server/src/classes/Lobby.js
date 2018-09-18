@@ -59,7 +59,7 @@ class LobbyState {
 	 */
 	addPlayer (id, player) {
 		const game = _.find(this.games, { id });
-		if (game.firstCorrectAnswer) {
+		if (!game.firstCorrectAnswer) {
 			game.players.push(player);
 			server.publish('/lobby', { event: PLAYER_JOINED, game });
 			server.publish(`/game/${id}`, { event: PLAYER_JOINED, game });

@@ -34,6 +34,7 @@ class Game {
 		this.showNumber = options.showNumber;
 		this.state = PRE_START;
 		this.chatRoom = new ChatRoom({ id: this.id });
+		this.lastPicker = this.host;
 	}
 
 	/**
@@ -170,7 +171,12 @@ class Game {
 				this.advanceRound();
 			}
 			const game = this.getGame();
-			this.setAnswer(game, true, true, player.username);
+			this.setAnswer({
+				game,
+				includeAnswer: true,
+				correct: true,
+				username: player.username,
+			});
 			server.publish(`/game/${this.id}`, { event: CORRECT_ANSWER, game });
 			server.publish('/lobby', { event: GAME_CHANGED, game });
 			this.currentQuestion = null;
@@ -192,10 +198,22 @@ class Game {
 			if (this.allPlayersAttempted) {
 				this.onAllPlayersAttempted();
 				game = this.getGame();
-				this.setAnswer(game, true, false, player.username, answer);
+				this.setAnswer({
+					game,
+					includeAnswer: true,
+					correct: false,
+					username: player.username,
+					wrongAnswer: answer,
+				});
 			} else {
 				game = this.getGame();
-				this.setAnswer(game, false, false, player.username, answer);
+				this.setAnswer({
+					game,
+					includeAnswer: false,
+					correct: false,
+					username: player.username,
+					wrongAnswer: answer,
+				});
 			}
 			server.publish(`/game/${this.id}`, { event: INCORRECT_ANSWER, game: game });
 		}
@@ -255,7 +273,7 @@ class Game {
 				this.advanceRound();
 			}
 			const game = this.getGame();
-			this.setAnswer(game, true, false);
+			this.setAnswer({ game, includeAnswer: true, correct: false });
 			server.publish(`/game/${this.id}`, { event: BUZZ_TIMEOUT, game });
 			this.timedOutPlayers = [];
 		}
@@ -263,18 +281,20 @@ class Game {
 
 	/**
 	 * Attaches the correct answer to a game reference
-	 * @param {Game} game
-	 * @param {boolean} includeAnswer
-	 * @param {boolean} correct
-	 * @param {string} username
-	 * @param {string} wrongAnswer
+	 * @param {any} opts
+	 *   - game
+	 *   - includeAnswer
+	 *   - correct
+	 *   - username
+	 *   - wrongAnswer
 	 */
-	setAnswer (game, includeAnswer, correct, username, wrongAnswer) {
+	setAnswer (opts) {
 		let value;
-		if (includeAnswer) {
+		let { correct, username, wrongAnswer } = opts;
+		if (opts.includeAnswer) {
 			value = _.toUpper(_.get(this, 'currentQuestion.answer'));
 		}
-		_.set(game, 'answer', {
+		_.set(opts.game, 'answer', {
 			correct,
 			username,
 			value,
