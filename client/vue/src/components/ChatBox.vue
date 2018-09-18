@@ -13,8 +13,8 @@
         </div>
       </div>
       <form v-show="expanded">
-        <input @keyup.stop="onSubmit" type="text" placeholder="Type your message..."
-        v-model="currentMessage" autofocus maxlength="2000"/>
+        <input ref="input" @keyup.stop="onSubmit" type="text" placeholder="Type your message..."
+        v-model="currentMessage" maxlength="2000"/>
       </form>
     </div>
   </div>
@@ -61,6 +61,8 @@ export default {
     expand() {
       this.expanded = !this.expanded;
       if (this.expanded) {
+        // wait to expand then autofocus input
+        setTimeout(() => this.$refs.input.focus(), 200);
         this.unread = 0;
       }
     },
@@ -70,10 +72,12 @@ export default {
       if (val.length > oldVal.length && !this.expanded) {
         this.unread = this.unread + 1;
       }
+      if (this.expanded) {
+        setTimeout(() => {
+          this.$refs.textArea.scrollTop = this.$refs.textArea.scrollHeight;
+        }, 100);
+      }
     },
-  },
-  updated() {
-    this.$refs.textArea.scrollTop = this.$refs.textArea.scrollHeight;
   },
   async created() {
     await this.getGame(this.$route.params.id);
@@ -102,16 +106,21 @@ export default {
   }
 }
 
+$chatbox-bg: #2a3298;
+$chatbox-highlight: #7079e4;
 .chat-box header {
-  background: #293239;
   border-radius: 5px 5px 0 0;
   padding: 5px 12px;
   cursor: pointer;
   font-weight: normal;
+  background: $chatbox-bg;
+  box-shadow: 0px 2px 3px $chatbox-highlight inset;
+  transition: box-shadow .2s, background .2s;
 }
 
 .chat-box header:hover {
-  background: #222222;
+  background: darken($chatbox-bg, 5%);
+  box-shadow: 0px 2px 3px darken($chatbox-highlight, 5%) inset;
 }
 
 .chat {
