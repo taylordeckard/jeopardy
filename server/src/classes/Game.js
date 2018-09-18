@@ -33,7 +33,7 @@ class Game {
 		this.round = JEOPARDY;
 		this.showNumber = options.showNumber;
 		this.state = PRE_START;
-		this.chatRoom = new ChatRoom({id: this.id});
+		this.chatRoom = new ChatRoom({ id: this.id });
 	}
 
 	/**

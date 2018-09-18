@@ -1,5 +1,6 @@
-const { server } = require('../server');
 const _ = require('lodash');
+const Boom = require('boom');
+const { server } = require('../server');
 const Game = require('./Game');
 const qMethods = require('../methods/questions');
 const {
@@ -58,10 +59,14 @@ class LobbyState {
 	 */
 	addPlayer (id, player) {
 		const game = _.find(this.games, { id });
-		game.players.push(player);
-		server.publish('/lobby', { event: PLAYER_JOINED, game });
-		server.publish(`/game/${id}`, { event: PLAYER_JOINED, game });
-		return player;
+		if (game.firstCorrectAnswer) {
+			game.players.push(player);
+			server.publish('/lobby', { event: PLAYER_JOINED, game });
+			server.publish(`/game/${id}`, { event: PLAYER_JOINED, game });
+			return player;
+		}
+
+		return Boom.forbidden();
 	}
 
 	/**

@@ -34,11 +34,11 @@ server.route({
 	},
 });
 
-server.subscription(`/game/{id}`, {
-	onSubscribe: ( socket, path, params ) => {
+server.subscription('/game/{id}', {
+	onSubscribe: (socket, path, params) => {
 		logger.debug(`subscribed to /game/${params.id}`);
 	},
-	onUnsubscribe: (socket, path, params ) => {
+	onUnsubscribe: (socket, path, params) => {
 		logger.debug(`unsubscribed from /game/${params.id}`);
 		Lobby.removePlayerBySocket(socket.id);
 	},
