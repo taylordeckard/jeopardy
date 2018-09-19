@@ -66,6 +66,9 @@ export default {
         this.unread = 0;
       }
     },
+    mounted() {
+      setTimeout(() => this.$refs.input.focus(), 200);
+    },
   },
   watch: {
     messages(val, oldVal) {

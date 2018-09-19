@@ -54,7 +54,7 @@ module.exports = {
 		DOUBLE_JEOPARDY: 'Double Jeopardy!',
 		FINAL_JEOPARDY: 'Final Jeopardy!',
 	},
-	SIMILARITY_THRESHOLD: 0.75,
+	SIMILARITY_THRESHOLD: 0.65,
 	CHAT_CONSTANTS: {
 		MAX_LENGTH: 2000,
 		EMOJIS: [':trebek_surprised', ':trebek_smirk', ':trebek_comeon'],
