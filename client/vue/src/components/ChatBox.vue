@@ -63,11 +63,12 @@ export default {
       if (this.expanded) {
         // wait to expand then autofocus input
         setTimeout(() => this.$refs.input.focus(), 200);
+        // scroll to the bottom
+        setTimeout(() => {
+          this.$refs.textArea.scrollTop = this.$refs.textArea.scrollHeight;
+        }, 100);
         this.unread = 0;
       }
-    },
-    mounted() {
-      setTimeout(() => this.$refs.input.focus(), 200);
     },
   },
   watch: {
