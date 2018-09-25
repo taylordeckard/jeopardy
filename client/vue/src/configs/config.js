@@ -1,2 +1,2 @@
-export const SOCKET_URL = 'ws://localhost:8080/api/';
+export const SOCKET_URL = 'ws://www.taylordeckard.me:1111/api/';
 export const BASE_URL = '/api';
