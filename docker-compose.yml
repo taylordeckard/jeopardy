@@ -30,7 +30,7 @@ services:
             context: ./client
             dockerfile: ./Dockerfile
         ports:
-            - "8080:8080"
+            - "1111:1111"
         volumes: 
             - ./client/conf.d:/etc/nginx/conf.d
         network_mode: "bridge"
