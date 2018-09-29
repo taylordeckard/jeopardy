@@ -6,4 +6,4 @@ COPY static /usr/share/nginx/html
 RUN mkdir -p /usr/share/nginx/html/media
 COPY media /usr/share/nginx/html/media
 
-EXPOSE 8080
+EXPOSE 1111

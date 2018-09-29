@@ -9,9 +9,7 @@ RUN npm install --only=production
 ADD ./src /server/src
 
 # Copy built service into production image
-FROM node:8.11.1-alpine as alpine
 RUN npm install -g nodemon
-COPY --from=ubuntu /server /server
 
 WORKDIR /server
 
