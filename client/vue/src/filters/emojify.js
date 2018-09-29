@@ -3,13 +3,13 @@ import { forOwn } from 'lodash-es';
 
 const trebekTable = {
   ':trebek_surprised': {
-    imgUrl: '/images/trebek_surprised.jpg',
+    imgUrl: '/jprdy/images/trebek_surprised.jpg',
   },
   ':trebek_smirk': {
-    imgUrl: '/images/trebek_smirk.jpg',
+    imgUrl: '/jprdy/images/trebek_smirk.jpg',
   },
   ':trebek_comeon': {
-    imgUrl: '/images/trebek_comeon.jpg',
+    imgUrl: '/jprdy/images/trebek_comeon.jpg',
   },
 };
 
