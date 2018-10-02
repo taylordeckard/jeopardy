@@ -10,8 +10,12 @@ const sortDirWhitelist = ['ASC', 'DESC'];
 const upsertQuery = 'INSERT INTO winners(num_games_won, username, winnings) VALUES(1, $1, $2) ' +
 	'ON CONFLICT ON CONSTRAINT winners_username_key DO UPDATE SET num_games_won = ' +
 	'winners.num_games_won + 1, winnings = winners.winnings + $2';
-const getQuery = (sortValue, sortDir) =>
-	`SELECT * FROM winners ORDER BY ${sortValue} ${sortDir} LIMIT $1 OFFSET $2`;
+const getQuery = (sortValue, sortDir) => {
+	if (sortValue === 'num_games_won') {
+		return `SELECT * FROM winners ORDER BY ${sortValue} ${sortDir}, winnings DESC LIMIT $1 OFFSET $2`;
+	}
+	return `SELECT * FROM winners ORDER BY ${sortValue} ${sortDir} LIMIT $1 OFFSET $2`;
+};
 const getCountQuery = 'SELECT COUNT(*) from winners';
 
 module.exports = {
