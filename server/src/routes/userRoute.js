@@ -8,6 +8,10 @@ server.route({
 	path: '/user/register',
 	handler: (req) => {
 		const username = _.get(req, 'payload.username');
+		const isLoggedIn = Lobby.checkName(req.yar.get('username'));
+		if (isLoggedIn) {
+			return true;
+		}
 		if (Lobby.checkName(username)) {
 			// usernames must be unique
 			return Boom.badRequest('Username is already in use');
