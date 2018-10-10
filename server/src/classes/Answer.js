@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const stringSimilarity = require('string-similarity');
+const removeDiacritics = require('diacritics').remove;
 const { NUMBER_MAP, REGEX: { ARTICLES, BAD_CHARS }, SIMILARITY_THRESHOLD } = require('../constants');
 const logger = require('../logger');
 
@@ -7,8 +8,8 @@ module.exports = {
 	format (_realAnswer, _userAnswer) {
 		let realAnswer = _.replace(_.toLower(_realAnswer), BAD_CHARS, ''),
 			userAnswer = _.replace(_.toLower(_userAnswer), BAD_CHARS, '');
-		realAnswer = _.trim(_.replace(realAnswer, ARTICLES, ' '));
-		userAnswer = _.trim(_.replace(userAnswer, ARTICLES, ' '));
+		realAnswer = removeDiacritics(_.trim(_.replace(realAnswer, ARTICLES, ' ')));
+		userAnswer = removeDiacritics(_.trim(_.replace(userAnswer, ARTICLES, ' ')));
 		return { realAnswer, userAnswer };
 	},
 	checkNumbers (realAnswer, userAnswer) {
