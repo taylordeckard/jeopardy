@@ -31,8 +31,8 @@ module.exports = {
 		let isCorrect = _.some(_.map(userAnswerTokens, (uToken) => {
 			// compare the similarity of each user answer to each real answer
 			if (
-				// to reduce false positives, only compare tokens greater than length 3
-				uToken.length > 3
+				// to reduce false positives, only compare tokens greater than length 2
+				uToken.length > 2
 				// not included in the question
 				&& !_.includes(_.toLower(card.question), uToken)
 				// or the category

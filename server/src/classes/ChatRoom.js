@@ -39,7 +39,7 @@ const COMMANDS = {
 		publishServerMessage(id, username, 'Welcome! For help type ":help"', socket);
 	},
 	':help': (id, username, message, socket) => {
-		publishServerMessage(id, username, 'For a list of dank Trebek emojis, type ":emojis"', socket);
+		publishServerMessage(id, username, 'Use spacebar to "buzz in" when/if you know the answer to a clue. Your name will be highlighted in gold when it is your turn.<br><br>For a list of emojis, type ":emojis"', socket);
 	},
 	':emojis': (id, username, message, socket) => {
 		publishServerMessage(id, username, 'Prefix the following with a ":" - ' +
