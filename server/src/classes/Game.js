@@ -153,6 +153,9 @@ class Game {
 	 * @param {string} answer
 	 */
 	submitAnswer (answer) {
+		if (this.state !== ANSWER) {
+			return;
+		}
 		const isCorrect = Answer.check(
 			_.get(this, 'currentQuestion.answer'),
 			answer,
