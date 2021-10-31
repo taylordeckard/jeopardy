@@ -1,7 +1,7 @@
 const logger = require('./logger');
 const { server } = require('./server');
-const Nes = require('nes');
-const Yar = require('yar');
+const Nes = require('@hapi/nes');
+const Yar = require('@hapi/yar');
 const yarOptions = require('./config/session-config');
 const socketOptions = require('./methods/socket');
 

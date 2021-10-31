@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 const { server } = require('../server');
 const logger = require('../logger');
 const Lobby = require('../classes/Lobby');

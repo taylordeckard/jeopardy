@@ -1,5 +1,5 @@
 const { server } = require('../server');
-const Boom = require('boom');
+const Boom = require('@hapi/boom');
 const _ = require('lodash');
 const qMethods = require('../methods/questions');
 const logger = require('../logger');
