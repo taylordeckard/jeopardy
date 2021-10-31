@@ -1,0 +1,10 @@
+.git
+client
+postgres
+server
+.DS_Store
+.gitignore
+README.md
+docker-compose.yml
+example.gif
+example.webm

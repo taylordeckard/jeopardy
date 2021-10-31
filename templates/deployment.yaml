@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jprdy
+  labels:
+    app: jprdy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jprdy
+  template:
+    metadata:
+      {{- if .Values.annotations }}
+      annotations:
+        {{- range $key, $value := .Values.annotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      labels:
+        app: jprdy
+    spec:
+      serviceAccountName: warbler-k8s
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: jprdy-server
+        image: warbler.docker-registry/jprdy-server
+        ports:
+        - containerPort: 3000
+      - name: jprdy-nginx
+        image: warbler.docker-registry/jprdy-nginx
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: warbler-nfs
+          mountPath: /usr/share/nginx/html/media
+      volumes:
+      - name: warbler-nfs
+        nfs:
+          server: 10.0.1.198
+          path: /mnt/shared/jprdy/media

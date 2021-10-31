@@ -16,6 +16,7 @@ const routes = [
 ];
 
 export default new Router({
+  base: '/jprdy',
   routes,
   mode: 'history',
 });
