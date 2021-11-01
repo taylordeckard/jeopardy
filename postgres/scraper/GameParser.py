@@ -26,7 +26,7 @@ def parse(game_soup, show_number, output_file):
             clue_text = clue.find(class_='clue_text')
             if (clue_text is None):
                 continue
-            if (r is 'final_jeopardy_round'):
+            if (r == 'final_jeopardy_round'):
                 answer_text = answer_re.search(
                     round_soup.find(class_='category').div['onmouseover'])
             else:
@@ -37,7 +37,7 @@ def parse(game_soup, show_number, output_file):
             record['category'] = category_names[idx % 6]
             clue_value = clue.find(class_='clue_value')
             value = None
-            if (r is not 'final_jeopardy_round'):
+            if (r != 'final_jeopardy_round'):
                 if (clue_value is None):
                     record['isDailyDouble'] = True
                     daily_double = clue.find(class_='clue_value_daily_double')

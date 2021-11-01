@@ -1,15 +1,17 @@
 import Vue from 'vue';
 import { forOwn } from 'lodash-es';
 
+const BASE_URL = '/jprdy';
+
 const trebekTable = {
   ':trebek_surprised': {
-    imgUrl: '/images/trebek_surprised.jpg',
+    imgUrl: `${BASE_URL}/images/trebek_surprised.jpg`,
   },
   ':trebek_smirk': {
-    imgUrl: '/images/trebek_smirk.jpg',
+    imgUrl: `${BASE_URL}/images/trebek_smirk.jpg`,
   },
   ':trebek_comeon': {
-    imgUrl: '/images/trebek_comeon.jpg',
+    imgUrl: `${BASE_URL}/images/trebek_comeon.jpg`,
   },
 };
 
