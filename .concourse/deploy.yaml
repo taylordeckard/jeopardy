@@ -36,6 +36,7 @@ jobs:
   plan:
   - get: client-repo
     trigger: true
+  - get: jprdy-git
   - put: jprdy-helm
     params:
       chart: jprdy-git
