@@ -58,39 +58,40 @@ jobs:
           cd ../../../compiled-client
           mkdir -p static
           cp -r ../jprdy-git/client/vue/dist/* static/.
-  - in_parallel:
-    - task: build-client
-      privileged: true
-      config:
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: vito/oci-build-task
-        inputs: 
-        - name: compiled-client
-        outputs:
-        - name: client-image
-        run:
-          path: build
-        params:
-          CONTEXT: compiled-client
-    - task: build-server
-      privileged: true
-      config:
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: vito/oci-build-task
-        inputs: 
-        - name: jprdy-git
-        outputs:
-        - name: server-image
-        run:
-          path: build
-        params:
-          CONTEXT: jprdy-git/server
+  - task: build-client
+    privileged: true
+    output_mapping: {image: client-image}
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      inputs: 
+      - name: compiled-client
+      outputs:
+      - name: image
+      run:
+        path: build
+      params:
+        CONTEXT: compiled-client
+  - task: build-server
+    privileged: true
+    output_mapping: {image: server-image}
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      inputs: 
+      - name: jprdy-git
+      outputs:
+      - name: image
+      run:
+        path: build
+      params:
+        CONTEXT: jprdy-git/server
   - in_parallel:
     - put: client-repo
       params:
