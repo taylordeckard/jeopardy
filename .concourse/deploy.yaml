@@ -17,7 +17,7 @@ resources:
   type: registry-image
   icon: docker
   source:
-    repository: warbler.docker-registry/jprdy-client
+    repository: warbler.docker-registry/jprdy-nginx
     username: ((docker_registry.username))
     password: ((docker_registry.password))
     ca_certs:
