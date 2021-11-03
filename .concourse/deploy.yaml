@@ -1,0 +1,44 @@
+resource_types:
+- name: helm
+  type: docker-image
+  source:
+    repository: typositoire/concourse-helm3-resource
+
+resources:
+- name: jprdy-git
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/taylordeckard/jeopardy.git
+    username: (("github".access_token))
+    password: x-oauth-basic
+    branch: master
+- name: client-repo
+  type: registry-image
+  icon: docker
+  source:
+    repository: warbler.docker-registry/jprdy-client
+    username: ((docker_registry.username))
+    password: ((docker_registry.password))
+    ca_certs:
+    - ((docker_registry.ca))
+- name: jprdy-helm
+  type: helm
+  icon: ship-wheel
+  source:
+    admin_cert: ((kubernetes.cert_b64))
+    admin_key: ((kubernetes.key_b64))
+    cluster_ca: ((kubernetes.ca_b64))
+    cluster_url: ((kubernetes.url))
+
+jobs:
+- name: deploy
+  plan:
+  - get: client-repo
+    trigger: true
+  - put: jprdy-helm
+    params:
+      chart: jprdy-git
+      namespace: dev
+      release: jprdy
+

@@ -1,0 +1,24 @@
+resources:
+- name: jprdy-git
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/taylordeckard/jeopardy.git
+    username: (("github".access_token))
+    password: x-oauth-basic
+    branch: master
+    paths:
+    - .concourse/*
+    - .concourse/**/*
+
+jobs:
+- name: set-pipelines
+  plan:
+  - get: jprdy-git
+    trigger: true
+  - set_pipeline: jprdy-pipelines
+    file: jprdy-git/.concourse/pipelines.yaml
+  - set_pipeline: jprdy-build
+    file: jprdy-git/.concourse/build.yaml
+  - set_pipeline: jprdy-deploy
+    file: jprdy-git/.concourse/deploy.yaml
