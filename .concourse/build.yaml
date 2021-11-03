@@ -39,23 +39,23 @@ jobs:
         source:
           repository: node
           tag: 8-alpine
-        inputs:
-        - name: jprdy-git
-        outputs:
-        - name: compiled-client
-        run:
-          path: ash
-          args:
-          - -c
-          - |
-            set -e
-            cp -r jprdy-git/client/* compiled-client/.
-            cd jprdy-git/client/vue
-            npm i
-            npm run build
-            cd ../../../compiled-client
-            mkdir -p static
-            cp -r jprdy-git/client/vue/dist/* static/.
+      inputs:
+      - name: jprdy-git
+      outputs:
+      - name: compiled-client
+      run:
+        path: ash
+        args:
+        - -c
+        - |
+          set -e
+          cp -r jprdy-git/client/* compiled-client/.
+          cd jprdy-git/client/vue
+          npm i
+          npm run build
+          cd ../../../compiled-client
+          mkdir -p static
+          cp -r jprdy-git/client/vue/dist/* static/.
   - in_parallel:
     - task: build-client
       privileged: true
