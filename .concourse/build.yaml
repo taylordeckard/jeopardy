@@ -12,6 +12,7 @@ resources:
   icon: docker
   source:
     repository: warbler.docker-registry/jprdy-client
+    tag: latest
     username: ((docker_registry.username))
     password: ((docker_registry.password))
     ca_certs:
@@ -21,6 +22,7 @@ resources:
   icon: docker
   source:
     repository: warbler.docker-registry/jprdy-server
+    tag: latest
     username: ((docker_registry.username))
     password: ((docker_registry.password))
     ca_certs:
@@ -55,7 +57,7 @@ jobs:
           npm run build
           cd ../../../compiled-client
           mkdir -p static
-          cp -r jprdy-git/client/vue/dist/* static/.
+          cp -r ../jprdy-git/client/vue/dist/* static/.
   - in_parallel:
     - task: build-client
       privileged: true
